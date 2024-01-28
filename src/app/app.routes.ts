@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: '/welcome' },
-  { path: 'welcome', loadChildren: () => import('./pages/estoque/gerenciar-estoque/welcome.routes').then(m => m.WELCOME_ROUTES) }
+  { path: '', pathMatch: 'full', redirectTo: '/estoque' },
+  { path: 'estoque', loadComponent: () => import('./pages/estoque/index/index.component') },
+  { path: 'estoque/itens', loadComponent: () => import('./pages/estoque/itens/itens.component') },
 ];

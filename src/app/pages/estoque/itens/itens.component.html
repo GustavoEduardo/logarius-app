@@ -1,0 +1,22 @@
+<nz-table #itensTable nzSize="small" [nzData]="[]">
+  <thead>
+    <tr>
+      <th>Imagem</th>
+      <th>Nome</th>
+      <th>Quantidade</th>
+      <th>Valor</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of itensTable.data">
+      <td>{{data.imagem}}</td>
+      <td>{{data.nome}}</td>
+      <td>{{data.qtd_disponivel}}</td>
+      <td>{{data.valor}}</td>
+      <td nzRight>
+        <a>Detalhes</a>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
