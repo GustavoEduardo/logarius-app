@@ -40,3 +40,11 @@ nz-breadcrumb {
   max-height: 90%;
   overflow-x: auto;
 }
+
+
+
+@media (max-width: 600px) {
+  .mobile-side{
+    margin-left: -80px;
+  }
+}
