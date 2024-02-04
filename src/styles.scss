@@ -25,3 +25,28 @@
   display: flex;
   gap: 8px;
 }
+
+
+.flex-center{
+  padding: 15px 0;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.list-max {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+@media (max-height: 800px) {
+  .list-max{
+    max-height: 350px;
+  }
+}
+
+.card-main{
+  overflow-x: hidden;
+}
+

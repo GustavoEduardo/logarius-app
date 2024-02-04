@@ -4,6 +4,13 @@
 
 
     <ul nz-menu nzTheme="dark" nzMode="inline">
+      <li nz-submenu nzTitle="Estabelecimento" nzIcon="file">
+        <ul>
+          <li nz-menu-item>
+            <a [routerLink]="['comandas']">Comandas</a>
+          </li>
+        </ul>
+      </li>
       <li nz-submenu nzTitle="Estoque" nzIcon="file">
         <ul>
           <li nz-menu-item>
@@ -39,7 +46,8 @@
     </nz-header>
     <nz-content>
       <nz-breadcrumb>
-        <nz-breadcrumb-item>Estoque</nz-breadcrumb-item>
+        <nz-breadcrumb-item>Pasta atual</nz-breadcrumb-item>
+        <nz-breadcrumb-item>Página atual</nz-breadcrumb-item>
       </nz-breadcrumb>
       <div class="inner-content">
         <router-outlet></router-outlet>
