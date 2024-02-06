@@ -25,7 +25,7 @@
           <button nz-button nzType="default" (click)="showModalAddItem(c)">
             +
           </button>
-          <button nz-button nzType="primary" (click)="showModalPagar(c)">
+          <button nz-button nzType="link" (click)="showModalPagar(c)">
             Pagar
           </button>
         </span>
@@ -84,6 +84,7 @@
       <nz-form-label nzRequired>Titulo</nz-form-label>
       <nz-form-control>
         <input
+        formControlName="titulo"
           maxlength="20"
           nz-input
           placeholder="Infome o título da comanda."
@@ -168,7 +169,7 @@
   [nzWidth]="600"
   [nzVisible]="modalAddItemVisible"
   nzTitle="Adicionar itens a comanda {{ comandaSelecionada?.titulo }}"
-  [nzFooter]="footerTpl"
+  [nzFooter]="footerTplAddItem"
   (nzOnClose)="showModalAddItem()"
 >
   <div *nzDrawerContent>
@@ -250,12 +251,12 @@
     </div>
   </ng-template>
 
-  <ng-template #footerTplAdd>
+  <ng-template #footerTplAddItem>
     <div style="float: right">
       <button nz-button style="margin-right: 8px" (click)="showModalAddItem()">
         Cancelar
       </button>
-      <button nz-button nzType="primary">Adicionar</button>
+      <button [disabled]="!itensParaAdicionar.length" nz-button nzType="primary">Adicionar</button>
     </div>
   </ng-template>
 </nz-drawer>
@@ -271,7 +272,7 @@
   <ng-template #modalTitle>Pagar: {{ comandaSelecionada?.titulo }}</ng-template>
 
   <ng-template #modalContent>
-    <input nz-input type="number" placeholder="Insira o valor pago" />
+    <input [(ngModel)]="valorParaPagar" nz-input type="number" placeholder="Insira o valor pago" />
   </ng-template>
 
   <ng-template #modalFooter>
@@ -281,6 +282,7 @@
     @if (comandaSelecionada ) {
     <button
       nz-button
+      [disabled]="!valorParaPagar"
       nzType="primary"
       (click)="pagarComanda(comandaSelecionada.comanda_id)"
       [nzLoading]="false"

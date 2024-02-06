@@ -65,6 +65,8 @@ export default class ComandasComponent implements OnInit {
 
   itensParaAdicionar: any = [];
 
+  valorParaPagar = 0;
+
   produtoIdParaAdicionar: any = null;
   qtdParaAdicionar = 1;
   valorTotalParaAdd = 0;
@@ -216,20 +218,25 @@ export default class ComandasComponent implements OnInit {
 
   showModalAdicionar() {
     this.modalAddVisible = !this.modalAddVisible;
+
+    if (!this.modalAddVisible) {
+      this.formAdicionar.reset();
+    }
   }
 
   adicinarComanda() {
     if (this.formAdicionar.valid) {
+
     } else {
-      for (const key in this.formAdicionar.controls) {
-        if (key) {
-          const campo = this.formAdicionar.get(key);
-          if (campo) {
-            campo.markAsDirty();
-            campo.updateValueAndValidity();
-          }
+      Object.values(this.formAdicionar.controls).forEach(control => {
+        if (control.invalid) {
+          console.log(control)
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
         }
-      }
+      });
+
+
     }
   }
 
@@ -262,15 +269,26 @@ export default class ComandasComponent implements OnInit {
   }
 
   adicionarItem() {
+    let existe = false;
+
     const p = this.produtos.find(
       (p: any) => p.produto_id === this.produtoIdParaAdicionar
     );
 
-    this.itensParaAdicionar.push({
-      produto_id: this.produtoIdParaAdicionar,
-      quantidade: this.qtdParaAdicionar,
-      ...p,
+    this.itensParaAdicionar.forEach( (item: any) => {
+      if (item.produto_id === this.produtoIdParaAdicionar){
+        item.quantidade += this.qtdParaAdicionar;
+        existe = true;
+      }
     });
+
+    if (!existe){
+      this.itensParaAdicionar.push({
+        produto_id: this.produtoIdParaAdicionar,
+        quantidade: this.qtdParaAdicionar,
+        ...p,
+      });
+    }
 
     this.valorTotalParaAdd += p.valor * this.qtdParaAdicionar;
 
@@ -292,8 +310,8 @@ export default class ComandasComponent implements OnInit {
 }
 
 
-// ao adicionar verificar se já exoste e nesse caso só somar
 // remover item da comanda
 // cancelar comanda (cancela venda)
 // criar tipo IProduto
 // validar formulários
+// mascara valor para pagar
