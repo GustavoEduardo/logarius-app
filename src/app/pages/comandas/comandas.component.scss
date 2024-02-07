@@ -1,11 +1,13 @@
-div.flex-center{
+div.d-flex{
   background-color: rgb(253, 253, 253);
   padding-left: 10px;
 }
 
 .cardComanda{
   min-width: 260px;
-  box-shadow: 0 0 5px 0.1px rgb(235, 235, 235);
+  width: 23%;
+  max-width: 320px;
+  box-shadow: 0 0 5px 0.1px rgb(224, 224, 224);
   margin: 5px;
 
   div {

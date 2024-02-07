@@ -5,24 +5,30 @@
   [nzExtra]="extraTemplate"
   [nzBodyStyle]="{ 'padding': '0'}"
 >
-  <div class="flex-center">
+  <div class="d-flex">
     @for (c of comandas; track $index) {
+
+      <ng-template #tituloComanda>
+        <span style="color: #fff;">{{c.titulo}}</span>
+      </ng-template>
 
     <nz-card
       class="cardComanda"
       [nzBordered]="true"
-      nzTitle="{{ c.titulo }}"
+      [nzTitle]="tituloComanda"
       [nzExtra]="extraTemplateComanda"
-      [nzBodyStyle]="{ padding: '20px 25px' }"
+      style="background-color: #ff9d13;"
+      [nzBodyStyle]="{ padding: '20px 25px', 'background-color': '#fff' }"
     >
       <div>
-        <span>
-          {{
-            "Valor atual: " + (c.valorTotal - c.valorPago | currency : "BRL")
-          }}
-        </span>
+        <div style="display: flex; justify-content: space-between; padding: 0 5px;">
+          Valor atual:
+          <span style="font-size: large; margin-left: 10px;">
+            {{(c.valorTotal - c.valorPago | currency : "BRL")}}
+          </span>
+        </div>
         <span class="bts-comandas">
-          <button nz-button nzType="default" (click)="showModalAddItem(c)">
+          <button nz-button nzType="default" (click)="showModalAddItem(c)" title="Adicionar Item">
             +
           </button>
           <button nz-button nzType="link" (click)="showModalPagar(c)">
@@ -34,9 +40,8 @@
 
     <ng-template #extraTemplateComanda>
       <div class="extra-options">
-        <a nz-dropdown [nzDropdownMenu]="menu">
-          ...
-          <span nz-icon nzType="down"></span>
+        <a style="color: #fff; font-size: 1.2em;" nz-dropdown [nzDropdownMenu]="menu">
+          <span nz-icon nzType="more" nzTheme="outline"></span>
         </a>
         <nz-dropdown-menu #menu="nzDropdownMenu">
           <ul nz-menu>
@@ -60,7 +65,7 @@
       <span nz-icon nzType="search" nzTheme="outline"></span>
     </ng-template>
     <button nz-button nzType="primary" (click)="showModalAdicionar()">
-      Adicionar
+      Nova Comanda
     </button>
   </div>
 </ng-template>

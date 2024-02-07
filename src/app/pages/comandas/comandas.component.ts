@@ -17,6 +17,7 @@ import { IComanda } from '../../types/IComandas';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 
 @Component({
   selector: 'app-comandas',
@@ -35,6 +36,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
     NzListModule,
     NzModalModule,
     NzInputNumberModule,
+    NzIconModule
   ],
   templateUrl: './comandas.component.html',
   styleUrl: './comandas.component.scss',
