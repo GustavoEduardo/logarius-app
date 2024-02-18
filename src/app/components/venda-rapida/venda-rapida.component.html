@@ -1,0 +1,56 @@
+<nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzWidth]="600"
+  [nzVisible]="modalVendaRapidaVisible"
+  nzTitle="Venda Rápida"
+  [nzFooter]="footerTpl"
+  (nzOnClose)="showModalVendaRapida()"
+>
+  <form
+    nz-form
+    [formGroup]="formVendaRapida"
+    nzLayout="vertical"
+    *nzDrawerContent
+    [nzAutoTips]="autoTips"
+  >
+    <nz-form-item>
+      <nz-form-label nzRequired>Titulo</nz-form-label>
+      <nz-form-control>
+        <input
+        formControlName="titulo"
+          maxlength="20"
+          nz-input
+          placeholder="Infome o título da comanda."
+        />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label>Observação</nz-form-label>
+      <nz-form-control>
+        <nz-textarea-count [nzMaxCharacterCount]="50">
+          <textarea
+            rows="4"
+            formControlName="observacao"
+            nz-input
+            placeholder="Informe uma observação. (Opcional)"
+          ></textarea>
+        </nz-textarea-count>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+
+  <ng-template #footerTpl>
+    <div style="float: right">
+      <button
+        nz-button
+        style="margin-right: 8px"
+        (click)="showModalVendaRapida()"
+      >
+        Cancelar
+      </button>
+      <button nz-button nzType="primary" (click)="showModalVendaRapida()">
+        Adicionar
+      </button>
+    </div>
+  </ng-template>
+</nz-drawer>

@@ -23,7 +23,37 @@ nz-layout{
 nz-header {
   background: #fff;
   padding: 0;
+
+  .header-options{
+    float: inline-end;
+    height: 100%;
+  }
+
+  .header-options-flex{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    height: 100%;
+    margin-right: 15px;
+  }
+
+  .venda-rapida-bt{
+    line-height: 0px;
+    padding: 15px 10px;
+    height: 20px;
+    border-radius: 5px;
+    color: #fff;
+    background-color: #198754;
+    border: none;
+    cursor: pointer;
+
+    &:hover{
+      opacity: 0.8;
+    }
+  }
 }
+
+
 
 nz-content {
   margin: 0 16px;
@@ -40,7 +70,6 @@ nz-breadcrumb {
   max-height: 90%;
   overflow-x: auto;
 }
-
 
 
 @media (max-width: 600px) {
