@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideNzIcons } from './icons-provider';
-import { en_US, provideNzI18n, pt_BR } from 'ng-zorro-antd/i18n';
+import { provideNzI18n, pt_BR } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';

@@ -1,0 +1,139 @@
+<ng-template #tituloModalVenda>
+ <div style="display: flex; justify-content: space-between;">
+  <span>Nova Venda</span>
+  <span> {{valorTotalParaAdd | currency : "BRL"}} </span>
+ </div>
+</ng-template>
+
+<nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzWidth]="600"
+  [nzVisible]="modalVendaVisible"
+  [nzTitle]="tituloModalVenda"
+  [nzFooter]="footerTpl"
+  (nzOnClose)="showModalNovaVenda()"
+>
+  <form
+    nz-form
+    [formGroup]="formNovaVenda"
+    nzLayout="vertical"
+    *nzDrawerContent
+    [nzAutoTips]="autoTips"
+  >
+    <nz-form-item>
+      <nz-form-label nzRequired>Cliente</nz-form-label>
+      <nz-form-control>
+        <nz-select
+          nzShowSearch="true"
+          [nzAllowClear]="true"
+          formControlName="cliente_id"
+        >
+          @for (c of clientes; track $index) {
+          <nz-option [nzValue]="c.cliente_id" [nzLabel]="c.nome"></nz-option>
+          }
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>Método De Pagamento</nz-form-label>
+      <nz-form-control>
+        <nz-select
+          nzShowSearch="true"
+          [nzAllowClear]="true"
+          formControlName="metodo_pagamento_id"
+        >
+          @for (m of metodos_pagamento; track $index) {
+          <nz-option
+            [nzValue]="m.metodo_pagamento_id"
+            [nzLabel]="m.descricao"
+          ></nz-option>
+          }
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <div style="display: flex; align-items: center; gap: 10px">
+      <nz-form-item style="width: 70%">
+        <nz-form-label>Item</nz-form-label>
+        <nz-form-control>
+          <nz-select
+            nzShowSearch="true"
+            [nzAllowClear]="true"
+            [(ngModel)]="produtoIdParaAdicionar"
+            [ngModelOptions]="{ standalone: true }"
+          >
+            @for (p of produtos; track $index) {
+            <nz-option [nzValue]="p.produto_id" [nzLabel]="p.nome"></nz-option>
+            }
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>Qtd.</nz-form-label>
+        <nz-form-control>
+          <nz-input-number
+            style="width: 60px"
+            [(ngModel)]="qtdParaAdicionar"
+            [ngModelOptions]="{ standalone: true }"
+            [nzMin]="1"
+            [nzMax]="100"
+            [nzStep]="1"
+          ></nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+
+      <button
+        [disabled]="qtdParaAdicionar < 1 || !produtoIdParaAdicionar"
+        (click)="adicionarItem()"
+        nz-button
+        nzType="link"
+      >
+        Adicionar
+      </button>
+    </div>
+
+    <nz-list nzBordered nzHeader="Itens" [nzFooter]="footerTotalToAdd">
+      <div class="list-max">
+        @for (item of itensParaAdicionar; track $index){
+        <nz-list-item class="item-hover">
+          <div style="width: 100%" (click)="removerItem(item.produto_id)">
+            <span nz-typography>
+              {{ item.nome + " x" + item.quantidade }}
+            </span>
+            <span style="color: #fff">Clique para remover</span>
+            <span>
+              {{ item.valor * item.quantidade | currency : "BRL" }}
+            </span>
+          </div>
+        </nz-list-item>
+        }
+      </div>
+    </nz-list>
+
+    <ng-template #footerTotalToAdd>
+      <div
+        style="display: flex; justify-content: space-between; font-weight: bold"
+      >
+        <span>Total:</span>
+        <span>{{ valorTotalParaAdd | currency : "BRL" }}</span>
+      </div>
+    </ng-template>
+  </form>
+
+  <ng-template #footerTpl>
+    <div style="float: right">
+      <button
+        nz-button
+        style="margin-right: 8px"
+        (click)="showModalNovaVenda()"
+      >
+        Cancelar
+      </button>
+      <button nz-button nzType="primary" (click)="showModalNovaVenda()">
+        Fechar Venda
+      </button>
+    </div>
+  </ng-template>
+</nz-drawer>

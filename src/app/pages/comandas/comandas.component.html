@@ -3,32 +3,39 @@
   [nzBordered]="false"
   nzTitle="Comandas"
   [nzExtra]="extraTemplate"
-  [nzBodyStyle]="{ 'padding': '0'}"
+  [nzBodyStyle]="{ padding: '0' }"
 >
   <div class="d-flex">
     @for (c of comandas; track $index) {
 
-      <ng-template #tituloComanda>
-        <span style="color: #fff;">{{c.titulo}}</span>
-      </ng-template>
+    <ng-template #tituloComanda>
+      <span style="color: #fff">{{ c.titulo }}</span>
+    </ng-template>
 
     <nz-card
       class="cardComanda"
       [nzBordered]="true"
       [nzTitle]="tituloComanda"
       [nzExtra]="extraTemplateComanda"
-      style="background-color: #ff9d13;"
+      style="background-color: #ff9d13"
       [nzBodyStyle]="{ padding: '20px 25px', 'background-color': '#fff' }"
     >
       <div>
-        <div style="display: flex; justify-content: space-between; padding: 0 5px;">
+        <div
+          style="display: flex; justify-content: space-between; padding: 0 5px"
+        >
           Valor atual:
-          <span style="font-size: large; margin-left: 10px;">
-            {{(c.valorTotal - c.valorPago | currency : "BRL")}}
+          <span style="font-size: large; margin-left: 10px">
+            {{ c.valorTotal - c.valorPago | currency : "BRL" }}
           </span>
         </div>
         <span class="bts-comandas">
-          <button nz-button nzType="default" (click)="showModalAddItem(c)" title="Adicionar Item">
+          <button
+            nz-button
+            nzType="default"
+            (click)="showModalAddItem(c)"
+            title="Adicionar Item"
+          >
             +
           </button>
           <button nz-button nzType="link" (click)="showModalPagar(c)">
@@ -40,7 +47,11 @@
 
     <ng-template #extraTemplateComanda>
       <div class="extra-options">
-        <a style="color: #fff; font-size: 1.2em;" nz-dropdown [nzDropdownMenu]="menu">
+        <a
+          style="color: #fff; font-size: 1.2em"
+          nz-dropdown
+          [nzDropdownMenu]="menu"
+        >
           <span nz-icon nzType="more" nzTheme="outline"></span>
         </a>
         <nz-dropdown-menu #menu="nzDropdownMenu">
@@ -89,7 +100,7 @@
       <nz-form-label nzRequired>Titulo</nz-form-label>
       <nz-form-control>
         <input
-        formControlName="titulo"
+          formControlName="titulo"
           maxlength="20"
           nz-input
           placeholder="Infome o título da comanda."
@@ -180,7 +191,7 @@
   <div *nzDrawerContent>
     <form nz-form [nzAutoTips]="autoTips">
       <div style="display: flex; gap: 10px">
-        <nz-form-item style="width: 75%">
+        <nz-form-item style="width: 55%">
           <nz-form-label>Item</nz-form-label>
           <nz-form-control>
             <nz-select
@@ -219,7 +230,7 @@
           nz-button
           nzType="link"
         >
-          Add
+          Adicionar
         </button>
       </div>
     </form>
@@ -261,7 +272,13 @@
       <button nz-button style="margin-right: 8px" (click)="showModalAddItem()">
         Cancelar
       </button>
-      <button [disabled]="!itensParaAdicionar.length" nz-button nzType="primary">Adicionar</button>
+      <button
+        [disabled]="!itensParaAdicionar.length"
+        nz-button
+        nzType="primary"
+      >
+        Adicionar
+      </button>
     </div>
   </ng-template>
 </nz-drawer>
@@ -277,7 +294,12 @@
   <ng-template #modalTitle>Pagar: {{ comandaSelecionada?.titulo }}</ng-template>
 
   <ng-template #modalContent>
-    <input [(ngModel)]="valorParaPagar" nz-input type="number" placeholder="Insira o valor pago" />
+    <input
+      [(ngModel)]="valorParaPagar"
+      nz-input
+      type="number"
+      placeholder="Insira o valor pago"
+    />
   </ng-template>
 
   <ng-template #modalFooter>

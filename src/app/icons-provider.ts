@@ -6,6 +6,10 @@ import {
   DashboardOutline,
   ThunderboltOutline,
   MoreOutline,
+  HomeOutline,
+  DatabaseOutline,
+  PieChartOutline,
+  ShoppingOutline,
 } from '@ant-design/icons-angular/icons';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
@@ -16,6 +20,10 @@ const icons = [
   FormOutline,
   ThunderboltOutline,
   MoreOutline,
+  HomeOutline,
+  DatabaseOutline,
+  PieChartOutline,
+  ShoppingOutline
 ];
 
 export function provideNzIcons(): EnvironmentProviders {

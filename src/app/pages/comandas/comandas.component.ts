@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
@@ -13,11 +13,12 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { IComanda } from '../../types/IComandas';
+import { IComanda } from '../../types/IComanda';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { Helpers } from '../../shared/helpers';
 
 @Component({
   selector: 'app-comandas',
@@ -41,11 +42,13 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
   templateUrl: './comandas.component.html',
   styleUrl: './comandas.component.scss',
 })
-export default class ComandasComponent implements OnInit {
+export default class ComandasComponent extends Helpers implements OnInit {
   modalAddVisible = false;
   modalDetalhesVisible = false;
   modalPagarVisible = false;
   modalAddItemVisible = false;
+
+  fb = inject(FormBuilder);
 
   comandaSelecionada: IComanda | null = null;
 
@@ -53,13 +56,6 @@ export default class ComandasComponent implements OnInit {
     titulo: [null, Validators.required],
     observacao: [null],
   });
-
-  // add em Helpers
-  autoTips: Record<string, Record<string, string>> = {
-    default: {
-      required: 'Campo obrigatório',
-    },
-  };
 
   comandas: IComanda[] = [];
 
@@ -72,8 +68,6 @@ export default class ComandasComponent implements OnInit {
   produtoIdParaAdicionar: any = null;
   qtdParaAdicionar = 1;
   valorTotalParaAdd = 0;
-
-  constructor(private fb: FormBuilder) {}
 
   ngOnInit() {
     this.comandas = [
