@@ -1,7 +1,11 @@
 <nz-layout>
-  <nz-sider [ngClass]="[isCollapsed ? 'mobile-side' : '']" nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+  <nz-sider
+    [ngClass]="[isCollapsed ? 'mobile-side' : '']"
+    nzCollapsible
+    [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null"
+  >
     <div class="logo"></div>
-
 
     <ul nz-menu nzTheme="dark" nzMode="inline">
       <li nz-submenu nzTitle="Estabelecimento" nzIcon="home">
@@ -26,13 +30,17 @@
           </li>
         </ul>
       </li>
-      <li [nzDisabled]="true" nz-submenu nzTitle="Dashboards" nzIcon="pie-chart">
+      <li
+        [nzDisabled]="true"
+        nz-submenu
+        nzTitle="Dashboards"
+        nzIcon="pie-chart"
+      >
         <ul>
           <li nz-menu-item>Vendas</li>
         </ul>
       </li>
     </ul>
-
   </nz-sider>
   <nz-layout>
     <nz-header>
@@ -44,8 +52,16 @@
       ></span>
       <div class="header-options">
         <div class="header-options-flex">
-          <button class="modal-venda-bt" (click)="modalVenda.showModalNovaVenda()">
-            <i style="margin-top: -10px;" nz-icon nzType="thunderbolt" nzTheme="outline"></i>
+          <button
+            class="modal-venda-bt"
+            (click)="modalVenda.showModalNovaVenda()"
+          >
+            <i
+              style="margin-top: -10px"
+              nz-icon
+              nzType="thunderbolt"
+              nzTheme="outline"
+            ></i>
             Nova Venda
           </button>
         </div>
@@ -53,8 +69,8 @@
     </nz-header>
     <nz-content>
       <nz-breadcrumb>
-        <nz-breadcrumb-item>Pasta atual</nz-breadcrumb-item>
-        <nz-breadcrumb-item>Página atual</nz-breadcrumb-item>
+        <nz-breadcrumb-item>-</nz-breadcrumb-item>
+        <nz-breadcrumb-item>-</nz-breadcrumb-item>
       </nz-breadcrumb>
       <div class="inner-content">
         <router-outlet></router-outlet>

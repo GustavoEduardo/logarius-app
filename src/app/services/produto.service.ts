@@ -2,18 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { IVenda } from '../types/IVenda';
-
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
-export class VendaService {
-
+export class ProdutoService {
   http: HttpClient = inject(HttpClient);
 
-  create(data: Partial<IVenda> | any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/venda`, data);
+  get(): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/produto`);
   }
 }

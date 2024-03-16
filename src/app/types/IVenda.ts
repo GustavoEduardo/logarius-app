@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 // Types
 
@@ -10,7 +10,7 @@ export type IProdutosToAdd = z.infer<typeof ProdutosToAdd>;
 export const ProdutosToAdd = z.object({
   produto_id: z.string(),
   valor: z.number(),
-  quantidade: z.number()
+  quantidade: z.number(),
 });
 
 export const Venda = z.object({
@@ -24,7 +24,7 @@ export const Venda = z.object({
   status_pagamento: z.string().optional(),
   endereco_entrega: z.string().optional().nullable(),
   created_at: z.string().optional(),
-  produtos: z.array(ProdutosToAdd).optional()
+  produtos: z.array(ProdutosToAdd).optional(),
 });
 
 export const VendaEdit = z.object({
@@ -36,5 +36,5 @@ export const VendaEdit = z.object({
   endereco_entrega: z.string().optional(),
   status: z.string().optional(),
   status_pagamento: z.string().optional(),
-  produtos: z.array(ProdutosToAdd).optional()
+  produtos: z.array(ProdutosToAdd).optional(),
 });

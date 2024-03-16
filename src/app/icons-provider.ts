@@ -23,7 +23,7 @@ const icons = [
   HomeOutline,
   DatabaseOutline,
   PieChartOutline,
-  ShoppingOutline
+  ShoppingOutline,
 ];
 
 export function provideNzIcons(): EnvironmentProviders {

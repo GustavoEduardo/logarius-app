@@ -1,9 +1,7 @@
-
 export class Helpers {
-
-  protected autoTips: Record<string, Record<string, string>> = {
+  public autoTips: Record<string, Record<string, string>> = {
     default: {
-        required: 'Campo obrigatório',
-    }
+      required: 'Campo obrigatório',
+    },
   };
 }

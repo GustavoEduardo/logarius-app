@@ -1,4 +1,10 @@
-import { Component, ComponentRef, OnInit, ViewChild, viewChild } from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  OnInit,
+  ViewChild,
+  viewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -18,7 +24,7 @@ import { ModalVendaComponent } from './components/modal-venda/modal-venda.compon
     NzMenuModule,
     NzBreadCrumbModule,
     RouterModule,
-    ModalVendaComponent
+    ModalVendaComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -28,7 +34,6 @@ export class AppComponent implements OnInit {
 
   @ViewChild('modalVenda')
   modalVenda!: ModalVendaComponent;
-
 
   ngOnInit(): void {}
 }
