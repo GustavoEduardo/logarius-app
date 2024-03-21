@@ -1,128 +1,261 @@
+<nz-card
+  [nzBordered]="false"
+  nzTitle="Itens"
+  [nzExtra]="extraTemplate"
+  [nzBodyStyle]="{ padding: '0' }"
+>
+  <nz-table
+    #itensTable
+    nzSize="small"
+    [nzData]="produtos"
+    [nzFrontPagination]="false"
+    [nzTotal]="pagination?.total"
+    [nzPageSize]="pagination?.perPage"
+    [nzPageIndex]="pagination?.currentPage"
+    (nzQueryParams)="listByTable($event)"
+    [nzFooter]="footer"
+  >
+    <thead>
+      <tr>
+        <th nzAlign="center">Imagem</th>
+        <th nzColumnKey="nome" [nzSortFn]="true">Nome</th>
+        <th nzAlign="center" nzColumnKey="quantidade_estoque" [nzSortFn]="true">
+          Estoque
+        </th>
+        <th nzColumnKey="preco" [nzSortFn]="true">Valor</th>
+        <th nzAlign="center"></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for ( p of produtos; track $index) {
 
-  <nz-card [nzBordered]="false" nzTitle="Itens" [nzExtra]="extraTemplate" [nzBodyStyle]="{'padding': '0'}">
-    <nz-table #itensTable nzSize="small" [nzData]="[]">
-      <thead>
-        <tr>
-          <th>Imagem</th>
-          <th>Nome</th>
-          <th>Quantidade</th>
-          <th>Valor</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let data of itensTable.data">
-          <td>{{data.imagem}}</td>
-          <td>{{data.nome}}</td>
-          <td>{{data.qtd_disponivel}}</td>
-          <td>{{data.valor}}</td>
-          <td nzRight>
-            <a>Detalhes</a>
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-card>
+      <tr>
+        <td nzAlign="center">{{ p.imagem }}</td>
+        <td>{{ p.nome }}</td>
+        <td nzAlign="center">{{ p.quantidade_estoque }}</td>
+        <td>{{ p.preco | currency : "BRL" }}</td>
+        <td nzAlign="center" nzRight>
+          <a nz-button nzType="link" [disabled]="true">Detalhes</a>
+        </td>
+      </tr>
+
+      }
+    </tbody>
+  </nz-table>
+
+  <ng-template #footer>
+    @if (produtos?.length > 0) {
+    <span
+      >{{ pagination?.from }}-{{ pagination?.to }} de
+      {{ pagination?.total }} registros</span
+    >
+    }
+  </ng-template>
+</nz-card>
 
 <ng-template #extraTemplate>
   <div class="extra-options">
-
     <nz-input-group [nzSuffix]="suffixIconSearch">
-      <input type="text" nz-input placeholder="input search text" />
+      <input [(ngModel)]="formFiltrar.value.pesquisa" type="text" (keyup)="buscar()" nz-input placeholder="Pesquisar" />
     </nz-input-group>
     <ng-template #suffixIconSearch>
       <span nz-icon nzType="search" nzTheme="outline"></span>
     </ng-template>
-    <button nz-button nzType="primary" (click)="showModalAdicionar()">Adicionar</button>
-
+    <nz-badge *ngIf(false)
+      [nzCount]="qtdFiltrosAtivos"
+      [nzStyle]="{ backgroundColor: '#52c41a', 'margin-right': '15px' }"
+    >
+      <button
+        nz-tooltip="Filtros"
+        nz-button
+        nzType="primary"
+        (click)="showModalFiltrar()"
+      >
+        <span nz-icon nzType="filter" nzTheme="outline"></span>
+      </button>
+    </nz-badge>
+    <button
+      nz-tooltip="Limpar filtros"
+      nz-button
+      nzType="default"
+      (click)="resetSearch()"
+    >
+      Limpar
+    </button>
+    <button  *ngIf(false)
+      nz-tooltip="Redimensionar tabela"
+      nz-button
+      [nzType]="'default'"
+      (click)="expandEvent()"
+      style="padding: 4px 8px"
+    >
+      <span
+        nz-icon
+        [nzType]="expand ? 'fullscreen-exit' : 'fullscreen'"
+        nzTheme="outline"
+      ></span>
+    </button>
+    <button nz-button nzType="primary" (click)="showModalAdicionar()">
+      Adicionar
+    </button>
   </div>
 </ng-template>
 
+<nz-drawer
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzWidth]="720"
+  [nzVisible]="modalAddVisible"
+  nzTitle="Novo item"
+  [nzFooter]="footerTpl"
+  (nzOnClose)="showModalAdicionar()"
+>
+  <form nz-form *nzDrawerContent>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Name</nz-form-label>
+          <nz-form-control>
+            <input nz-input placeholder="please enter user name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Url</nz-form-label>
+          <nz-form-control>
+            <nz-input-group nzAddOnBefore="http://" nzAddOnAfter=".com">
+              <input type="text" nz-input placeholder="please enter url" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Owner</nz-form-label>
+          <nz-form-control>
+            <nz-select nzPlaceHolder="Please select an owner"></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Type</nz-form-label>
+          <nz-form-control>
+            <nz-select nzPlaceHolder="Please choose the type"></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Approver</nz-form-label>
+          <nz-form-control>
+            <nz-select nzPlaceHolder="Please choose the approver"></nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>DateTime</nz-form-label>
+          <nz-form-control> </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label>Description</nz-form-label>
+          <nz-form-control>
+            <textarea
+              nz-input
+              placeholder="please enter url description"
+              [nzAutosize]="{ minRows: 4, maxRows: 4 }"
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footerTpl>
+    <div style="float: right">
+      <button
+        nz-button
+        style="margin-right: 8px"
+        (click)="showModalAdicionar()"
+      >
+        Cancelar
+      </button>
+      <button nz-button nzType="primary" (click)="showModalAdicionar()">
+        Adicionar
+      </button>
+    </div>
+  </ng-template>
+</nz-drawer>
 
 <nz-drawer
-      [nzBodyStyle]="{ overflow: 'auto' }"
-      [nzWidth]="720"
-      [nzVisible]="modalAddVisible"
-      nzTitle="Novo item"
-      [nzFooter]="footerTpl"
-      (nzOnClose)="showModalAdicionar()"
-    >
-      <form nz-form *nzDrawerContent>
-        <div nz-row [nzGutter]="8">
-          <div nz-col nzSpan="12">
-            <nz-form-item>
-              <nz-form-label>Name</nz-form-label>
-              <nz-form-control>
-                <input nz-input placeholder="please enter user name" />
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-          <div nz-col nzSpan="12">
-            <nz-form-item>
-              <nz-form-label>Url</nz-form-label>
-              <nz-form-control>
-                <nz-input-group nzAddOnBefore="http://" nzAddOnAfter=".com">
-                  <input type="text" nz-input placeholder="please enter url" />
-                </nz-input-group>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-        <div nz-row [nzGutter]="8">
-          <div nz-col nzSpan="12">
-            <nz-form-item>
-              <nz-form-label>Owner</nz-form-label>
-              <nz-form-control>
-                <nz-select nzPlaceHolder="Please select an owner"></nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-          <div nz-col nzSpan="12">
-            <nz-form-item>
-              <nz-form-label>Type</nz-form-label>
-              <nz-form-control>
-                <nz-select nzPlaceHolder="Please choose the type"></nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-        <div nz-row [nzGutter]="8">
-          <div nz-col nzSpan="12">
-            <nz-form-item>
-              <nz-form-label>Approver</nz-form-label>
-              <nz-form-control>
-                <nz-select nzPlaceHolder="Please choose the approver"></nz-select>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-          <div nz-col nzSpan="12">
-            <nz-form-item>
-              <nz-form-label>DateTime</nz-form-label>
-              <nz-form-control>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-        <div nz-row [nzGutter]="8">
-          <div nz-col nzSpan="24">
-            <nz-form-item>
-              <nz-form-label>Description</nz-form-label>
-              <nz-form-control>
-                <textarea
-                  nz-input
-                  placeholder="please enter url description"
-                  [nzAutosize]="{ minRows: 4, maxRows: 4 }"
-                ></textarea>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </div>
-      </form>
+  [nzBodyStyle]="{ overflow: 'auto' }"
+  [nzWidth]="500"
+  [nzVisible]="modalFiltrarVisible"
+  nzTitle="Filtros"
+  [nzFooter]="footerTplFiltrar"
+  (nzOnClose)="showModalFiltrar()"
+>
+  <form nz-form
+  [formGroup]="formFiltrar"
+  nzLayout="vertical"
+  *nzDrawerContent>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Valor Mínimo</nz-form-label>
+          <nz-form-control>
+            <input formControlName="precoDe" nz-input />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label>Valor Maximo</nz-form-label>
+          <nz-form-control>
+            <input formControlName="precoAte" nz-input />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
 
-      <ng-template #footerTpl>
-        <div style="float: right">
-          <button nz-button style="margin-right: 8px;" (click)="showModalAdicionar()">Cancelar</button>
-          <button nz-button nzType="primary" (click)="showModalAdicionar()">Adicionar</button>
-        </div>
-      </ng-template>
-    </nz-drawer>
+  </form>
+
+  <ng-template #footerTplFiltrar>
+    <div style="float: right">
+      <button
+        nz-button
+        style="margin-right: 8px"
+        (click)="showModalFiltrar()"
+      >
+        Cancelar
+      </button>
+      <button nz-button nzType="primary" (click)="filtrar(formFiltrar, params)">
+        Filtrar
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template #footerTpl>
+    <div style="float: right">
+      <button
+        nz-button
+        style="margin-right: 8px"
+        (click)="showModalAdicionar()"
+      >
+        Cancelar
+      </button>
+      <button nz-button nzType="primary" (click)="showModalAdicionar()">
+        Adicionar
+      </button>
+    </div>
+  </ng-template>
+</nz-drawer>

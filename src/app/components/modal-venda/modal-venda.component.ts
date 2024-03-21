@@ -41,25 +41,12 @@ import { NgxMaskDirective } from 'ngx-mask';
   styleUrl: './modal-venda.component.scss',
 })
 export class ModalVendaComponent extends Helpers {
-  fb = inject(FormBuilder);
-  toastr = inject(ToastrService);
-  metodoPagemantoService = inject(MetodoPagamentoService);
-  produtoService = inject(ProdutoService);
-  vendaService = inject(VendaService);
-
   @Output() showModal = new EventEmitter<boolean>();
 
   modalVendaVisible = false;
 
   clientes: any = [];
   metodos_pagamento: any = [];
-
-  formNovaVenda = this.fb.group({
-    cliente_id: [null, Validators.required],
-    metodo_pagamento_id: [null, Validators.required],
-    valor: [0],
-    valor_desconto: [0],
-  });
 
   produtos: any = [];
 
@@ -71,6 +58,19 @@ export class ModalVendaComponent extends Helpers {
   valorTotalVenda = 0;
 
   maxDescontoPorcentagem = 100;
+
+  fb = inject(FormBuilder);
+  toastr = inject(ToastrService);
+  metodoPagemantoService = inject(MetodoPagamentoService);
+  produtoService = inject(ProdutoService);
+  vendaService = inject(VendaService);
+
+  formNovaVenda = this.fb.group({
+    cliente_id: [null, Validators.required],
+    metodo_pagamento_id: [null, Validators.required],
+    valor: [0],
+    valor_desconto: [0],
+  });
 
   ngOnInit() {
     this.clientes = [

@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 export class ProdutoService {
   http: HttpClient = inject(HttpClient);
 
-  get(): Observable<any> {
-    return this.http.get(`${environment.apiUrl}/produto`);
+  get(queryStr?: any): Observable<any> {
+    return this.http.get(`${environment.apiUrl}/produto${queryStr || ''}`);
   }
 }

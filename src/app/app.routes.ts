@@ -7,10 +7,6 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/comandas/comandas.component'),
   },
   {
-    path: 'estoque',
-    loadComponent: () => import('./pages/estoque/index/index.component'),
-  },
-  {
     path: 'estoque/itens',
     loadComponent: () => import('./pages/estoque/itens/itens.component'),
   },

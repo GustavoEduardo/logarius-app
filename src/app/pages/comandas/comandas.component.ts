@@ -47,15 +47,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
   modalDetalhesVisible = false;
   modalPagarVisible = false;
   modalAddItemVisible = false;
-
-  fb = inject(FormBuilder);
-
   comandaSelecionada: IComanda | null = null;
-
-  formAdicionar = this.fb.group({
-    titulo: [null, Validators.required],
-    observacao: [null],
-  });
 
   comandas: IComanda[] = [];
 
@@ -68,6 +60,13 @@ export default class ComandasComponent extends Helpers implements OnInit {
   produtoIdParaAdicionar: any = null;
   qtdParaAdicionar = 1;
   valorTotalParaAdd = 0;
+
+  fb = inject(FormBuilder);
+
+  formAdicionar = this.fb.group({
+    titulo: [null, Validators.required],
+    observacao: [null],
+  });
 
   ngOnInit() {
     this.comandas = [

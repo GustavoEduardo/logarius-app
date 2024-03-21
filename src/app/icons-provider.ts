@@ -10,6 +10,9 @@ import {
   DatabaseOutline,
   PieChartOutline,
   ShoppingOutline,
+  FullscreenOutline,
+  FullscreenExitOutline,
+  FilterOutline,
 } from '@ant-design/icons-angular/icons';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
@@ -24,6 +27,9 @@ const icons = [
   DatabaseOutline,
   PieChartOutline,
   ShoppingOutline,
+  FullscreenOutline,
+  FullscreenExitOutline,
+  FilterOutline
 ];
 
 export function provideNzIcons(): EnvironmentProviders {

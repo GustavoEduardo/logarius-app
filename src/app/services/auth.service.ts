@@ -7,9 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class AuthService {
-  token: string =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTA1OTEzOTksImV4cCI6MTcxMDYxOTM5OX0.S4et3roslbkiyzs8PChpNcwEo23NsJ2KmD9JvsFfzMo';
-
+  token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MTEwMDY5NjEsImV4cCI6MTcxMTAzNDk2MX0.v4PPo3K8Mz1tvPlhV8BmDoJimaUEU7GpJGLCmLpNQ9c';
   http: HttpClient = inject(HttpClient);
 
   login(): Observable<any> {
