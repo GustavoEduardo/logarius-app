@@ -16,15 +16,18 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { Helpers } from '../../../shared/helpers';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-itens',
   standalone: true,
   imports: [
+    NgxMaskDirective,
     NzTableModule,
     NzCardModule,
     NzButtonModule,
@@ -78,7 +81,24 @@ export default class ItensComponent extends Helpers implements OnInit {
     pesquisa: [null],
   });
 
+  formCadastrar = this.fb.group({
+    nome: [null, Validators.required],
+    descricao: [null],
+    quantidade_estoque: [null, Validators.required],
+    preco: [null, Validators.required],
+    preco_custo: [null, Validators.required],
+    categoria_id: [null, Validators.required],
+    marca_id: [null, Validators.required],
+    fornecedor_id: [null, Validators.required],
+  });
+
   timeSearchId: any = null;
+
+  categorias: any = [{categoria_id: 'c8579a1a-5d73-4ba6-8cd7-48a04bb49496', descricao: 'Indefinido'}];
+  fornecedores: any = [{fornecedor_id: '3e6ba4ee-450b-45f8-a6bd-622c0894546e', descricao: 'Indefinido'}];
+  marcas: any = [{marca_id: '47eb4cf8-12e9-4999-89e6-4ed3adbb59d9', descricao: 'Indefinido'}];
+
+  loadingBt = false;
 
   ngOnInit() {
     this.listar();
@@ -209,5 +229,33 @@ export default class ItensComponent extends Helpers implements OnInit {
     return { qtdFiltrosAtivos, queryString };
   }
 
-  preparaFiltros() {}
+  cadastrar() {
+
+    if (this.formCadastrar.valid){
+        this.loadingBt = true;
+
+        this.produtoService.create(this.formCadastrar.value).subscribe({
+          next: (res)=>{
+            this.loadingBt = false;
+            this.showModalAdicionar();
+            this.formCadastrar.reset();
+            this.listar();
+            this.toastr.success(res.result.message || 'Produto cadastrado com sucesso');
+          },
+          error: (err)=>{
+            this.loadingBt = false;
+            this.toastr.error(err.error.message || 'Falha ao cadastrar produto');
+          }
+        })
+
+
+    }else {
+      Object.values(this.formCadastrar.controls).forEach((c) => {
+        if (c.invalid) {
+          c.markAsDirty();
+          c.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
@@ -7,6 +7,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import {
   FormBuilder,
+  FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
@@ -15,10 +16,16 @@ import { CommonModule } from '@angular/common';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { IComanda } from '../../types/IComanda';
 import { NzListModule } from 'ng-zorro-antd/list';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { Helpers } from '../../shared/helpers';
+import { ComandaService } from '../../services/comanda.service';
+import { ToastrService } from 'ngx-toastr';
+import { NzTableQueryParams } from 'ng-zorro-antd/table';
+import { ProdutoService } from '../../services/produto.service';
+import { IProduto } from '../../types/IProduto';
+import { NzSliderModule } from 'ng-zorro-antd/slider';
 
 @Component({
   selector: 'app-comandas',
@@ -37,12 +44,34 @@ import { Helpers } from '../../shared/helpers';
     NzListModule,
     NzModalModule,
     NzInputNumberModule,
-    NzIconModule
+    NzIconModule,
+    NzSliderModule,
   ],
   templateUrl: './comandas.component.html',
   styleUrl: './comandas.component.scss',
 })
 export default class ComandasComponent extends Helpers implements OnInit {
+  pagination: any = {
+    perPage: 50,
+    currentPage: 1,
+    last_page: 1,
+    total: 50,
+    from: 1,
+    to: 1,
+  };
+
+  params: any = {
+    pageIndex: 1,
+    pageSize: 50,
+    sort: [],
+    filter: [],
+  };
+  qtdFiltrosAtivos = 0;
+  modalFiltrarVisible = false;
+  expand = false;
+  queryString = '';
+  timeSearchId: any = null;
+
   modalAddVisible = false;
   modalDetalhesVisible = false;
   modalPagarVisible = false;
@@ -59,156 +88,137 @@ export default class ComandasComponent extends Helpers implements OnInit {
 
   produtoIdParaAdicionar: any = null;
   qtdParaAdicionar = 1;
-  valorTotalParaAdd = 0;
+  valor_finalParaAdd = 0;
 
   fb = inject(FormBuilder);
+  comandaService = inject(ComandaService);
+  produtoService = inject(ProdutoService);
+  toastr = inject(ToastrService);
+  modal = inject(NzModalService);
 
   formAdicionar = this.fb.group({
     titulo: [null, Validators.required],
     observacao: [null],
   });
 
-  ngOnInit() {
-    this.comandas = [
-      {
-        comanda_id: '1',
-        titulo: 'Gustavo Primo',
-        observacao: 'Está com 5 pessoas',
-        valorTotal: 62.0,
-        valorPago: 0,
-        itens: [
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'long Neck Stela 600ml ', valor: 7.0 },
-          { nome: 'Narguilé', valor: 20.0 },
-          { nome: 'Essencia maracujá marca', valor: 5.0 },
-        ],
-        status: 'aberta',
-      },
-      {
-        comanda_id: '2',
-        titulo: 'Gustavo Primo',
-        observacao: 'Está com 5 pessoas',
-        valorTotal: 62.0,
-        valorPago: 0,
-        itens: [
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'long Neck Stela 600ml ', valor: 7.0 },
-          { nome: 'Narguilé', valor: 20.0 },
-          { nome: 'Essencia maracujá marca', valor: 5.0 },
-        ],
-        status: 'aberta',
-      },
-      {
-        comanda_id: '3',
-        titulo: 'Gustavo Primo',
-        observacao: 'Está com 5 pessoas',
-        valorTotal: 62.0,
-        valorPago: 0,
-        itens: [
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'long Neck Stela 600ml ', valor: 7.0 },
-          { nome: 'Narguilé', valor: 20.0 },
-          { nome: 'Essencia maracujá marca', valor: 5.0 },
-        ],
-        status: 'aberta',
-      },
-      {
-        comanda_id: '4',
-        titulo: 'Gustavo Primo',
-        observacao: 'Está com 5 pessoas',
-        valorTotal: 62.0,
-        valorPago: 0,
-        itens: [
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'long Neck Stela 600ml ', valor: 7.0 },
-          { nome: 'Narguilé', valor: 20.0 },
-          { nome: 'Essencia maracujá marca', valor: 5.0 },
-        ],
-        status: 'aberta',
-      },
-      {
-        comanda_id: '5',
-        titulo: 'Gustavo Primo',
-        observacao: 'Está com 5 pessoas',
-        valorTotal: 62.0,
-        valorPago: 0,
-        itens: [
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'long Neck Stela 600ml ', valor: 7.0 },
-          { nome: 'Narguilé', valor: 20.0 },
-          { nome: 'Essencia maracujá marca', valor: 5.0 },
-        ],
-        status: 'aberta',
-      },
-      {
-        comanda_id: '6',
-        titulo: 'Gustavo Primo',
-        observacao: 'Está com 5 pessoas',
-        valorTotal: 62.0,
-        valorPago: 0,
-        itens: [
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'long Neck Stela 600ml ', valor: 7.0 },
-          { nome: 'Narguilé', valor: 20.0 },
-          { nome: 'Essencia maracujá marca', valor: 5.0 },
-        ],
-        status: 'aberta',
-      },
-      {
-        comanda_id: '7',
-        titulo: 'Gustavo Primo',
-        observacao: 'Está com 5 pessoas',
-        valorTotal: 62.0,
-        valorPago: 0,
-        itens: [
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'Dose de gin p', valor: 25.0 },
-          { nome: 'long Neck Stela 600ml ', valor: 7.0 },
-          { nome: 'Narguilé', valor: 20.0 },
-          { nome: 'Essencia maracujá marca', valor: 5.0 },
-        ],
-        status: 'aberta',
-      },
-    ];
+  formFiltrar = this.fb.group({
+    pesquisa: [null],
+  });
 
-    this.produtos = [
-      {
-        produto_id: '1',
-        nome: 'Produto 1',
-        valor: 10.0,
-        descricao: 'Breve descrição ddo item para facilitar a identificação',
+  qtdToRemove = 1;
+  qtdMaxRemove = 1;
+
+  coresComanda: any = {
+    'Aberta': '#0275d8',
+    'Fechada': '#f0ad4e',
+    'Cancelada': '#d9534f'
+  }
+
+  ngOnInit() {
+    this.listar();
+    this.listarProdutos();
+  }
+
+  listarProdutos() {
+    this.produtoService.get().subscribe({
+      next: (res) => {
+        this.produtos = res.result;
       },
-      {
-        produto_id: '2',
-        nome: 'Produto 2',
-        valor: 10.0,
-        descricao: 'Breve descrição ddo item para facilitar a identificação',
+      error: (err) => {
+        this.toastr.error(err.error.message || 'Erro ao listar produtos.');
       },
-      {
-        produto_id: '3',
-        nome: 'Produto 3',
-        valor: 10.0,
-        descricao: 'Breve descrição ddo item para facilitar a identificação',
+    });
+  }
+
+  listar() {
+    const f = this.filtrar(this.formFiltrar, this.params, this.pagination);
+
+    this.qtdFiltrosAtivos = f.qtdFiltrosAtivos;
+
+    this.comandaService.get(f.queryString).subscribe({
+      next: (res) => {
+        this.comandas = res.result.data;
+
+        this.pagination = {
+          perPage: Number(res.result.pagination.perPage),
+          currentPage: Number(res.result.pagination.currentPage),
+          from: Number(res.result.pagination.from) || 1,
+          to: Number(res.result.pagination.to),
+          lastPage: Number(res.result.pagination.lastPage),
+          total: Number(res.result.pagination.total),
+        };
       },
-      {
-        produto_id: '4',
-        nome: 'Produto 4',
-        valor: 10.0,
-        descricao: 'Breve descrição ddo item para facilitar a identificação',
+      error: (err) => {
+        this.toastr.error(err.error.message || 'Erro ao listar produtos.');
       },
-      {
-        produto_id: '5',
-        nome: 'Produto 5',
-        valor: 10.0,
-        descricao: 'Breve descrição ddo item para facilitar a identificação',
-      },
-    ];
+    });
+  }
+
+  filtrar(
+    form?: FormGroup,
+    params?: NzTableQueryParams,
+    pagination?: any
+  ): { qtdFiltrosAtivos: number; queryString: string } {
+    this.params.pageIndex = 1;
+    let qtdFiltrosAtivos = 0;
+    let queryString = '';
+
+    for (let [key, value] of Object.entries(form?.value)) {
+      if (value) {
+        qtdFiltrosAtivos =
+          key !== 'pesquisa' ? qtdFiltrosAtivos + 1 : qtdFiltrosAtivos;
+
+        if (value) {
+          queryString += `&${key}=${value}`;
+        }
+      }
+    }
+
+    if (params)
+      // adiciona ordem
+      for (let s of params.sort) {
+        if (s.value) {
+          queryString += `&ordem=${s.key}&tipo_ordem=${s.value}`;
+        }
+      }
+
+    if (pagination)
+      if (pagination.currentPage) {
+        // adiciona páginação
+        queryString += `&currentPage=${this.pagination.currentPage}`;
+      }
+
+    if (pagination.perPage) {
+      queryString += `&perPage=${this.pagination.perPage}`;
+    }
+
+    queryString = queryString.replace('&', '?');
+
+    return { qtdFiltrosAtivos, queryString };
+  }
+
+  buscar() {
+    window.clearTimeout(this.timeSearchId);
+
+    this.timeSearchId = setTimeout(() => {
+      this.pagination.currentPage = 1;
+      this.listar();
+    }, 900);
+  }
+
+  resetSearch() {
+    this.params = {
+      pageIndex: 1,
+      pageSize: 50,
+      sort: [],
+      filter: [],
+    };
+
+    this.pagination.currentPage = 1;
+
+    this.formFiltrar.reset();
+
+    this.listar();
   }
 
   showModalAdicionar() {
@@ -221,17 +231,26 @@ export default class ComandasComponent extends Helpers implements OnInit {
 
   adicinarComanda() {
     if (this.formAdicionar.valid) {
-
+      this.comandaService.create(this.formAdicionar.value).subscribe({
+        next: (res) => {
+          this.comandas = res.result.data;
+          this.toastr.success('Comanda criada com sucesso.');
+          this.listar();
+          this.showModalAdicionar();
+        },
+        error: (err) => {
+          this.toastr.error(
+            err.error.message || 'Erro ao tentar fechar a venda.'
+          );
+        },
+      });
     } else {
-      Object.values(this.formAdicionar.controls).forEach(control => {
+      Object.values(this.formAdicionar.controls).forEach((control) => {
         if (control.invalid) {
-          console.log(control)
           control.markAsDirty();
           control.updateValueAndValidity({ onlySelf: true });
         }
       });
-
-
     }
   }
 
@@ -241,14 +260,9 @@ export default class ComandasComponent extends Helpers implements OnInit {
   }
 
   showModalPagar(c: IComanda | null = null) {
+    this.valorParaPagar =  this.modalPagarVisible ? 0 : this.valorParaPagar;
     this.comandaSelecionada = c;
     this.modalPagarVisible = !this.modalPagarVisible;
-  }
-
-  pagarComanda(idComanda: string, fechar: boolean = false) {
-    // service de pagar/fechar comanda
-
-    this.showModalPagar();
   }
 
   showModalAddItem(c: IComanda | null = null) {
@@ -259,7 +273,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
       this.produtoIdParaAdicionar = null;
       this.qtdParaAdicionar = 1;
       this.itensParaAdicionar = [];
-      this.valorTotalParaAdd = 0;
+      this.valor_finalParaAdd = 0;
     }
   }
 
@@ -270,43 +284,233 @@ export default class ComandasComponent extends Helpers implements OnInit {
       (p: any) => p.produto_id === this.produtoIdParaAdicionar
     );
 
-    this.itensParaAdicionar.forEach( (item: any) => {
-      if (item.produto_id === this.produtoIdParaAdicionar){
-        item.quantidade += this.qtdParaAdicionar;
-        existe = true;
-      }
-    });
+    if (this.comandaSelecionada) {
+      const toUpdate = this.comandaSelecionada;
 
-    if (!existe){
-      this.itensParaAdicionar.push({
-        produto_id: this.produtoIdParaAdicionar,
-        quantidade: this.qtdParaAdicionar,
-        ...p,
+      toUpdate.produtos.forEach((item: any) => {
+        if (item.produto_id === this.produtoIdParaAdicionar) {
+          item.quantidade += this.qtdParaAdicionar;
+          existe = true;
+        }
       });
+
+      if (!existe) {
+        toUpdate.produtos.push({
+          produto_id: this.produtoIdParaAdicionar,
+          quantidade: this.qtdParaAdicionar,
+          ...p,
+        });
+      }
+
+      toUpdate.valor = Number(toUpdate.valor) + p.preco * this.qtdParaAdicionar;
+
+      toUpdate.valor_final = toUpdate.valor; // Valor da venda
+
+      this.produtoIdParaAdicionar = null;
+      this.qtdParaAdicionar = 1;
+
+      this.update(toUpdate);
     }
+  }
 
-    this.valorTotalParaAdd += p.valor * this.qtdParaAdicionar;
+  confirmRemoverItem(produto_id: string, nzContent: TemplateRef<{}>) {
+    this.qtdToRemove = 1;
+    this.qtdMaxRemove = 1;
 
-    this.produtoIdParaAdicionar = null;
-    this.qtdParaAdicionar = 1;
+    const produto = this.modalDetalhesVisible
+      ? this.comandaSelecionada?.produtos.find(
+          (p) => p.produto_id === produto_id
+        )
+      : this.itensParaAdicionar?.find(
+          (p: IProduto) => p.produto_id === produto_id
+        );
+
+    this.qtdToRemove = produto.quantidade;
+    this.qtdMaxRemove = produto.quantidade;
+
+    const nzTitle =
+      produto.quantidade === 1
+        ? 'Tem certeza que deseja remover o item?'
+        : 'Selecione a quantidade para remover';
+
+    const modal: NzModalRef = this.modal.create({
+      nzTitle,
+      nzContent,
+      nzWidth: 350,
+      nzFooter: [
+        {
+          label: 'Cancelar',
+          onClick: () => modal.destroy(),
+        },
+        {
+          label: 'Confirmar',
+          type: 'primary',
+          onClick: () => {
+            this.removerItem(produto_id);
+            modal.destroy();
+          },
+        },
+      ],
+    });
   }
 
   removerItem(produto_id: string) {
-    let index = 0;
+    if (this.comandaSelecionada) {
+      const toUpadate = this.comandaSelecionada;
+      toUpadate.valor = 0;
 
-    for (let [i, p] of this.itensParaAdicionar.entries()) {
-      if (p.produto_id === produto_id) {
-        index = i;
-        this.valorTotalParaAdd = this.valorTotalParaAdd - p.valor * p.quantidade;
+      for (let i = 0; i < toUpadate.produtos.length; i++) {
+        if (toUpadate.produtos[i].produto_id === produto_id) {
+          if (this.qtdToRemove === toUpadate.produtos[i].quantidade) {
+            toUpadate.produtos.splice(i, 1);
+          } else {
+            toUpadate.produtos[i].quantidade -= this.qtdToRemove;
+          }
+
+          toUpadate.valor +=
+            toUpadate.produtos[i].preco * toUpadate.produtos[i].quantidade;
+        }
       }
+
+      toUpadate.valor_final = toUpadate.valor;
+
+      this.update(toUpadate);
     }
-    this.itensParaAdicionar.splice(index, 1);
+  }
+
+  pagarComanda(comandaId: string) {
+    const comanda: any = this.comandas.find((c) => c.comanda_id === comandaId);
+
+    const c = {...comanda};
+
+    const valorRestante = Number(c.valor_final) - Number(c.valor_pago);
+
+    if (this.valorParaPagar > valorRestante) {
+      this.toastr.error('Valor informado maior que o valor restante.');
+      return;
+    } else if (this.valorParaPagar <= 0) {
+      this.toastr.error('Valor informado deve ser maior que 0.');
+      return;
+    } else if (this.valorParaPagar === valorRestante) {
+      c.valor_pago = Number(c.valor_pago) + this.valorParaPagar;
+      this.showModalPagar();
+      this.confirmFechar(c);
+    } else {
+      c.valor_pago = Number(c.valor_pago) + this.valorParaPagar;
+
+      this.update(c, true, false);
+      this.showModalPagar();
+    }
+  }
+
+  confirmFechar(c: IComanda) {
+    const nzTitle = `Fechar Comanda?`;
+
+    const modal: NzModalRef = this.modal.create({
+      nzTitle,
+      nzContent:
+        'O valor informado corresponde ao total da comanda. Deseja fecha-la?',
+      nzWidth: 550,
+      nzFooter: [
+        {
+          label: 'Pagar manter aberta',
+          onClick: () => {
+            modal.destroy();
+            this.update(c, true, false);
+          },
+        },
+        {
+          label: 'Fechar Comanda',
+          type: 'primary',
+          onClick: () => {
+            modal.destroy();
+            this.fecharComanda(c.comanda_id);
+          },
+        },
+      ],
+    });
+  }
+
+  fecharComanda(comandaId: string) {
+    const comanda: IComanda | any = this.comandas.find(
+      (c) => c.comanda_id === comandaId
+    );
+    const c = {...comanda};
+    c.valor_pago = Number(c.valor_pago) + this.valorParaPagar;
+    c.status_comanda = 'Fechada';
+
+    const valorRestante = Number(c.valor_final) - Number(c.valor_pago);
+
+    if (valorRestante) {
+      this.confirmDesconto(c, valorRestante);
+    } else {
+      this.update(c, false, false);
+      this.showModalPagar();
+    }
+  }
+
+  confirmDesconto(c: IComanda, desconto: number) {
+    const nzTitle = `Dar desconto?`;
+
+    const modal: NzModalRef = this.modal.create({
+      nzTitle,
+      nzContent: `Restam R$ ${desconto} para o total da comanda. Fechar a venda com esse desconto?`,
+      nzWidth: 550,
+      nzFooter: [
+        {
+          label: 'Voltar',
+          onClick: () => {
+            modal.destroy();
+          },
+        },
+        {
+          label: 'Fechar com desconto',
+          type: 'primary',
+          onClick: () => {
+            c.valor_desconto = desconto;
+            modal.destroy();
+            this.update(c, false, false);
+            this.showModalPagar();
+          },
+        },
+      ],
+    });
+  }
+
+  // apenasComanda = true não atualizará a venda
+  update(comanda: IComanda, apenasComanda = false, silent = true) {
+    this.comandaService.update(comanda, apenasComanda).subscribe({
+      next: (res) => {
+        this.comandas = res.result.data;
+        if (!silent){
+          this.toastr.success('Operação realizada com sucesso.');
+        }
+        this.listar();
+        this.listarProdutos(); // para trazer lista com estoques atualizados
+      },
+      error: (err) => {
+        this.toastr.error(
+          err.error.message || 'Erro ao tentar realizar operação.'
+        );
+      },
+    });
   }
 }
 
+/* Função cancelar
 
-// remover item da comanda
-// cancelar comanda (cancela venda)
-// criar tipo IProduto
-// validar formulários
-// mascara valor para pagar
+Exibir msg de confirmação
+  Deve cancelar a venda voltando estques pela api) e alterar status_comanda
+
+*/
+
+/* Pendente na tela
+
+  Cancelar comanda
+  Melhorar modal pagar
+  Detalhes da comanda pendente e cancelada
+  Filtros
+  vizualização (ordenar por status ou data)
+  Loadings
+
+ */

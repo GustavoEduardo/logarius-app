@@ -12,6 +12,7 @@ export const Produto = z.object({
   nome: z.string(),
   descricao: z.string(),
   preco: z.number(),
+  preco_custo: z.number(),
   quantidade_estoque: z.number(),
   categoria_id: z.string(),
   fornecedor_id: z.string(),

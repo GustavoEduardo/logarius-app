@@ -14,6 +14,7 @@
     [nzPageIndex]="pagination?.currentPage"
     (nzQueryParams)="listByTable($event)"
     [nzFooter]="footer"
+    class="table-small"
   >
     <thead>
       <tr>
@@ -55,13 +56,23 @@
 
 <ng-template #extraTemplate>
   <div class="extra-options">
+    <button nz-button nzType="primary" (click)="showModalAdicionar()">
+      Cadastrar
+    </button>
     <nz-input-group [nzSuffix]="suffixIconSearch">
-      <input [(ngModel)]="formFiltrar.value.pesquisa" type="text" (keyup)="buscar()" nz-input placeholder="Pesquisar" />
+      <input
+        [(ngModel)]="formFiltrar.value.pesquisa"
+        type="text"
+        (keyup)="buscar()"
+        nz-input
+        placeholder="Pesquisar"
+      />
     </nz-input-group>
     <ng-template #suffixIconSearch>
       <span nz-icon nzType="search" nzTheme="outline"></span>
     </ng-template>
-    <nz-badge *ngIf(false)
+    <nz-badge
+      *ngIf(false)
       [nzCount]="qtdFiltrosAtivos"
       [nzStyle]="{ backgroundColor: '#52c41a', 'margin-right': '15px' }"
     >
@@ -82,7 +93,8 @@
     >
       Limpar
     </button>
-    <button  *ngIf(false)
+    <button
+      *ngIf(false)
       nz-tooltip="Redimensionar tabela"
       nz-button
       [nzType]="'default'"
@@ -95,83 +107,163 @@
         nzTheme="outline"
       ></span>
     </button>
-    <button nz-button nzType="primary" (click)="showModalAdicionar()">
-      Adicionar
-    </button>
   </div>
 </ng-template>
 
 <nz-drawer
   [nzBodyStyle]="{ overflow: 'auto' }"
-  [nzWidth]="720"
+  [nzWidth]="650"
   [nzVisible]="modalAddVisible"
-  nzTitle="Novo item"
+  nzTitle="Cadastrar Produto"
   [nzFooter]="footerTpl"
   (nzOnClose)="showModalAdicionar()"
 >
-  <form nz-form *nzDrawerContent>
+  <form
+    [nzAutoTips]="autoTips"
+    nz-form
+    [formGroup]="formCadastrar"
+    *nzDrawerContent
+  >
     <div nz-row [nzGutter]="8">
-      <div nz-col nzSpan="12">
+      <div nz-col nzSpan="24">
         <nz-form-item>
-          <nz-form-label>Name</nz-form-label>
-          <nz-form-control>
-            <input nz-input placeholder="please enter user name" />
+          <nz-form-label [nzSpan]="5" nzRequired>Nome</nz-form-label>
+          <nz-form-control
+            [nzSpan]="19"
+            [nzHasFeedback]="formCadastrar.value.nome"
+          >
+            <input
+              formControlName="nome"
+              nz-input
+              placeholder="Informe o nome do produto"
+            />
           </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col nzSpan="12">
-        <nz-form-item>
-          <nz-form-label>Url</nz-form-label>
-          <nz-form-control>
-            <nz-input-group nzAddOnBefore="http://" nzAddOnAfter=".com">
-              <input type="text" nz-input placeholder="please enter url" />
-            </nz-input-group>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </div>
-    <div nz-row [nzGutter]="8">
-      <div nz-col nzSpan="12">
-        <nz-form-item>
-          <nz-form-label>Owner</nz-form-label>
-          <nz-form-control>
-            <nz-select nzPlaceHolder="Please select an owner"></nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col nzSpan="12">
-        <nz-form-item>
-          <nz-form-label>Type</nz-form-label>
-          <nz-form-control>
-            <nz-select nzPlaceHolder="Please choose the type"></nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-    </div>
-    <div nz-row [nzGutter]="8">
-      <div nz-col nzSpan="12">
-        <nz-form-item>
-          <nz-form-label>Approver</nz-form-label>
-          <nz-form-control>
-            <nz-select nzPlaceHolder="Please choose the approver"></nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      <div nz-col nzSpan="12">
-        <nz-form-item>
-          <nz-form-label>DateTime</nz-form-label>
-          <nz-form-control> </nz-form-control>
         </nz-form-item>
       </div>
     </div>
     <div nz-row [nzGutter]="8">
       <div nz-col nzSpan="24">
         <nz-form-item>
-          <nz-form-label>Description</nz-form-label>
-          <nz-form-control>
-            <textarea
+          <nz-form-label [nzSpan]="5" nzRequired>Categoria</nz-form-label>
+          <nz-form-control
+            [nzSpan]="19"
+            [nzHasFeedback]="formCadastrar.value.categoria_id"
+          >
+            <nz-select
+              nzShowSearch="true"
+              [nzAllowClear]="true"
+              nzPlaceHolder="Selecione"
+              formControlName="categoria_id"
+            >
+              @for (c of categorias; track $index) {
+              <nz-option
+                [nzValue]="c.categoria_id"
+                [nzLabel]="c.descricao"
+              ></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzRequired>Marca</nz-form-label>
+          <nz-form-control
+            [nzSpan]="19"
+            [nzHasFeedback]="formCadastrar.value.marca_id"
+          >
+            <nz-select
+              nzPlaceHolder="Selecione"
+              nzShowSearch="true"
+              [nzAllowClear]="true"
+              formControlName="marca_id"
+            >
+              @for (m of marcas; track $index) {
+              <nz-option
+                [nzValue]="m.marca_id"
+                [nzLabel]="m.descricao"
+              ></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="10" nzRequired>Preço de Venda</nz-form-label>
+          <nz-form-control [nzHasFeedback]="formCadastrar.value.preco">
+            <input
+              type="text"
+              mask="separator.2"
+              thousandSeparator="."
+              formControlName="preco"
               nz-input
-              placeholder="please enter url description"
+              placeholder="EX. 0,00"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Preço de Custo</nz-form-label>
+          <nz-form-control [nzHasFeedback]="formCadastrar.value.preco_custo">
+            <input
+              type="text"
+              mask="separator.2"
+              thousandSeparator="."
+              formControlName="preco_custo"
+              nz-input
+              placeholder="EX. 0,00"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="10" nzRequired>Fornecedor</nz-form-label>
+          <nz-form-control [nzHasFeedback]="formCadastrar.value.fornecedor_id">
+            <nz-select
+              nzPlaceHolder="Selecione"
+              nzShowSearch="true"
+              [nzAllowClear]="true"
+              formControlName="fornecedor_id"
+            >
+              @for (f of fornecedores; track $index) {
+              <nz-option
+                [nzValue]="f.fornecedor_id"
+                [nzLabel]="f.descricao"
+              ></nz-option>
+              }
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col nzSpan="12">
+        <nz-form-item>
+          <nz-form-label nzRequired>Quantidade inicial</nz-form-label>
+          <nz-form-control
+            [nzHasFeedback]="formCadastrar.value.quantidade_estoque"
+          >
+            <input
+              formControlName="quantidade_estoque"
+              nz-input
+              type="number"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="8">
+      <div nz-col nzSpan="24">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5">Descrição</nz-form-label>
+          <nz-form-control [nzHasFeedback]="formCadastrar.value.descricao">
+            <textarea
+              formControlName="descricao"
+              nz-input
+              placeholder="Descrição do item"
               [nzAutosize]="{ minRows: 4, maxRows: 4 }"
             ></textarea>
           </nz-form-control>
@@ -189,8 +281,8 @@
       >
         Cancelar
       </button>
-      <button nz-button nzType="primary" (click)="showModalAdicionar()">
-        Adicionar
+      <button nz-button nzType="primary" (click)="cadastrar()">
+        Confirmar
       </button>
     </div>
   </ng-template>
@@ -204,10 +296,7 @@
   [nzFooter]="footerTplFiltrar"
   (nzOnClose)="showModalFiltrar()"
 >
-  <form nz-form
-  [formGroup]="formFiltrar"
-  nzLayout="vertical"
-  *nzDrawerContent>
+  <form nz-form [formGroup]="formFiltrar" nzLayout="vertical" *nzDrawerContent>
     <div nz-row [nzGutter]="8">
       <div nz-col nzSpan="12">
         <nz-form-item>
@@ -226,16 +315,11 @@
         </nz-form-item>
       </div>
     </div>
-
   </form>
 
   <ng-template #footerTplFiltrar>
     <div style="float: right">
-      <button
-        nz-button
-        style="margin-right: 8px"
-        (click)="showModalFiltrar()"
-      >
+      <button nz-button style="margin-right: 8px" (click)="showModalFiltrar()">
         Cancelar
       </button>
       <button nz-button nzType="primary" (click)="filtrar(formFiltrar, params)">

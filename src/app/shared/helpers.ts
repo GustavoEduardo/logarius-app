@@ -30,6 +30,18 @@ export class Helpers {
     return queryParams.length > 0 ? '?' + queryParams.join('&') : '';
   }
 
+  static deleteNull(data: any) {
+    let res: any = {};
+
+    Object.entries(data).forEach((d) => {
+      if (d[1]) {
+        res[d[0]] = d[1];
+      }
+    });
+
+    return res;
+  }
+
   public timeDiff(d1: any, d2: any = null) {
     if (d2 === null) {
       const currentdate = new Date();

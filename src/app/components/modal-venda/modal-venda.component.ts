@@ -87,7 +87,11 @@ export class ModalVendaComponent extends Helpers {
   showModalNovaVenda() {
     this.modalVendaVisible = !this.modalVendaVisible;
 
-    if (!this.modalVendaVisible) this.formNovaVenda.reset();
+    if (!this.modalVendaVisible) {
+      this.formNovaVenda.reset();
+      this.itensDaVenda = [];
+      this.valorTotalVenda = 0;
+    }
   }
 
   listMetodosPagamento() {
@@ -201,7 +205,6 @@ export class ModalVendaComponent extends Helpers {
           },
         });
     } else {
-      console.log(this.formNovaVenda.controls);
       Object.values(this.formNovaVenda.controls).forEach((c) => {
         if (c.invalid) {
           c.markAsDirty();

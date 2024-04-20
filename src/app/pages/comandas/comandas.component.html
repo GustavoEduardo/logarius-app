@@ -17,28 +17,33 @@
       [nzBordered]="true"
       [nzTitle]="tituloComanda"
       [nzExtra]="extraTemplateComanda"
-      style="background-color: #ff9d13"
+      [ngStyle]="{ 'background-color': coresComanda[c.status_comanda] }"
       [nzBodyStyle]="{ padding: '20px 25px', 'background-color': '#fff' }"
     >
       <div>
         <div
           style="display: flex; justify-content: space-between; padding: 0 5px"
         >
-          Valor atual:
+          @if (comandaSelecionada?.status_comanda === 'Aberta') { Valor atual:
           <span style="font-size: large; margin-left: 10px">
-            {{ c.valorTotal - c.valorPago | currency : "BRL" }}
+            {{ (c.valor_final || 0) - (c.valor_pago || 0) | currency : "BRL" }}
           </span>
+          } @else { Valor pago:
+          <span style="font-size: large; margin-left: 10px">
+            {{ c.valor_pago || 0 | currency : "BRL" }}
+          </span>
+          }
         </div>
         <span class="bts-comandas">
           <button
             nz-button
             nzType="default"
-            (click)="showModalAddItem(c)"
+            (click)="showModalDetalhes(c)"
             title="Adicionar Item"
           >
-            +
+            Detalhes
           </button>
-          <button nz-button nzType="link" (click)="showModalPagar(c)">
+          <button *ngIf="comandaSelecionada?.status_comanda === 'Aberta'" nz-button nzType="link" (click)="showModalPagar(c)">
             Pagar
           </button>
         </span>
@@ -46,7 +51,7 @@
     </nz-card>
 
     <ng-template #extraTemplateComanda>
-      <div class="extra-options">
+      <div class="extra-options" *ngIf="comandaSelecionada?.status_comanda === 'Aberta'">
         <a
           style="color: #fff; font-size: 1.2em"
           nz-dropdown
@@ -56,7 +61,6 @@
         </a>
         <nz-dropdown-menu #menu="nzDropdownMenu">
           <ul nz-menu>
-            <li (click)="showModalDetalhes(c)" nz-menu-item>Detalhes</li>
             <li nz-menu-item>Cancelar</li>
           </ul>
         </nz-dropdown-menu>
@@ -69,14 +73,28 @@
 
 <ng-template #extraTemplate>
   <div class="extra-options">
+    <button nz-button nzType="primary" (click)="showModalAdicionar()">
+      Nova Comanda
+    </button>
     <nz-input-group [nzSuffix]="suffixIconSearch">
-      <input type="text" nz-input placeholder="Procurar" />
+      <input
+        [(ngModel)]="formFiltrar.value.pesquisa"
+        type="text"
+        (keyup)="buscar()"
+        nz-input
+        placeholder="Pesquisar"
+      />
     </nz-input-group>
     <ng-template #suffixIconSearch>
       <span nz-icon nzType="search" nzTheme="outline"></span>
     </ng-template>
-    <button nz-button nzType="primary" (click)="showModalAdicionar()">
-      Nova Comanda
+    <button
+      nz-tooltip="Limpar filtros"
+      nz-button
+      nzType="default"
+      (click)="resetSearch()"
+    >
+      Limpar
     </button>
   </div>
 </ng-template>
@@ -147,48 +165,6 @@
   (nzOnClose)="showModalDetalhes()"
 >
   <div *nzDrawerContent>
-    <nz-list nzBordered nzHeader="Itens" [nzFooter]="footerTotal">
-      <div class="list-max">
-        @for (item of comandaSelecionada?.itens; track $index){
-        <nz-list-item>
-          <span nz-typography>
-            {{ item.nome }}
-          </span>
-          {{ item.valor | currency : "BRL" }}
-        </nz-list-item>
-        }
-      </div>
-    </nz-list>
-  </div>
-
-  <ng-template #footerTotal>
-    <div
-      style="display: flex; justify-content: space-between; font-weight: bold"
-    >
-      <span>Total:</span>
-      <span>{{ comandaSelecionada?.valorTotal | currency : "BRL" }}</span>
-    </div>
-  </ng-template>
-
-  <ng-template #footerTplC>
-    <div style="float: right">
-      <button nz-button style="margin-right: 8px" (click)="showModalDetalhes()">
-        Fechar
-      </button>
-      <button [disabled]="true" nz-button nzType="primary">Imprimir</button>
-    </div>
-  </ng-template>
-</nz-drawer>
-
-<nz-drawer
-  [nzBodyStyle]="{ overflow: 'auto' }"
-  [nzWidth]="600"
-  [nzVisible]="modalAddItemVisible"
-  nzTitle="Adicionar itens a comanda {{ comandaSelecionada?.titulo }}"
-  [nzFooter]="footerTplAddItem"
-  (nzOnClose)="showModalAddItem()"
->
-  <div *nzDrawerContent>
     <form nz-form [nzAutoTips]="autoTips">
       <div style="display: flex; gap: 10px">
         <nz-form-item style="width: 55%">
@@ -235,21 +211,20 @@
       </div>
     </form>
 
-    <nz-list
-      nzBordered
-      nzHeader="Itens para adicionar"
-      [nzFooter]="footerTotalToAdd"
-    >
+    <nz-list nzBordered nzHeader="Itens" [nzFooter]="footerTotal">
       <div class="list-max">
-        @for (item of itensParaAdicionar; track $index){
+        @for (item of comandaSelecionada?.produtos; track $index){
         <nz-list-item class="item-hover">
-          <div style="width: 100%" (click)="removerItem(item.produto_id)">
+          <div
+            style="width: 100%"
+            (click)="confirmRemoverItem(item.produto_id, qtdRemoveInput)"
+          >
             <span nz-typography>
-              {{ item.nome + " x" + item.quantidade }}
+              {{ item.nome }} <b>{{ " x " + item.quantidade }}</b>
             </span>
             <span style="color: #fff">Clique para remover</span>
             <span>
-              {{ item.valor * item.quantidade | currency : "BRL" }}
+              {{ item.preco * item.quantidade | currency : "BRL" }}
             </span>
           </div>
         </nz-list-item>
@@ -258,27 +233,21 @@
     </nz-list>
   </div>
 
-  <ng-template #footerTotalToAdd>
+  <ng-template #footerTotal>
     <div
       style="display: flex; justify-content: space-between; font-weight: bold"
     >
-      <span>Total para adicionar:</span>
-      <span>{{ valorTotalParaAdd | currency : "BRL" }}</span>
+      <span>Total:</span>
+      <span>{{ comandaSelecionada?.valor_final | currency : "BRL" }}</span>
     </div>
   </ng-template>
 
-  <ng-template #footerTplAddItem>
+  <ng-template #footerTplC>
     <div style="float: right">
-      <button nz-button style="margin-right: 8px" (click)="showModalAddItem()">
-        Cancelar
+      <button nz-button style="margin-right: 8px" (click)="showModalDetalhes()">
+        Fechar
       </button>
-      <button
-        [disabled]="!itensParaAdicionar.length"
-        nz-button
-        nzType="primary"
-      >
-        Adicionar
-      </button>
+      <!-- <button [disabled]="true" nz-button nzType="primary">Imprimir</button> -->
     </div>
   </ng-template>
 </nz-drawer>
@@ -291,7 +260,12 @@
   (nzOnCancel)="showModalPagar()"
   [nzWidth]="350"
 >
-  <ng-template #modalTitle>Pagar: {{ comandaSelecionada?.titulo }}</ng-template>
+  <ng-template #modalTitle
+    >Pagar comanda:
+    <span style="font-size: 0.8em">{{
+      comandaSelecionada?.titulo
+    }}</span></ng-template
+  >
 
   <ng-template #modalContent>
     <input
@@ -306,12 +280,12 @@
     <button nz-button nzType="default" (click)="showModalPagar()">
       Cancelar
     </button>
-    @if (comandaSelecionada ) {
+
     <button
       nz-button
       [disabled]="!valorParaPagar"
       nzType="primary"
-      (click)="pagarComanda(comandaSelecionada.comanda_id)"
+      (click)="pagarComanda(comandaSelecionada!.comanda_id)"
       [nzLoading]="false"
     >
       Pagar
@@ -319,11 +293,30 @@
     <button
       nz-button
       nzType="primary"
-      (click)="pagarComanda(comandaSelecionada.comanda_id, true)"
+      (click)="fecharComanda(comandaSelecionada!.comanda_id)"
       [nzLoading]="false"
     >
       Fechar Comanda
     </button>
-    }
   </ng-template>
 </nz-modal>
+
+<ng-template #qtdRemoveInput>
+  <nz-row>
+    <nz-col nzSpan="15">
+      <nz-slider
+        [nzMin]="1"
+        [nzMax]="qtdMaxRemove"
+        [(ngModel)]="qtdToRemove"
+      ></nz-slider>
+    </nz-col>
+    <div nz-col nzSpan="4">
+      <nz-input-number
+        [nzMin]="1"
+        [nzMax]="qtdMaxRemove"
+        [ngStyle]="{ marginLeft: '16px' }"
+        [(ngModel)]="qtdToRemove"
+      ></nz-input-number>
+    </div>
+  </nz-row>
+</ng-template>
