@@ -125,7 +125,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
         this.produtos = res.result;
       },
       error: (err) => {
-        this.toastr.error(err.error.message || 'Erro ao listar produtos.');
+        this.toastr.error(err.error?.message || 'Erro ao listar produtos.');
       },
     });
   }
@@ -149,7 +149,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
         };
       },
       error: (err) => {
-        this.toastr.error(err.error.message || 'Erro ao listar produtos.');
+        this.toastr.error(err.error?.message || 'Erro ao listar produtos.');
       },
     });
   }
@@ -240,7 +240,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
         },
         error: (err) => {
           this.toastr.error(
-            err.error.message || 'Erro ao tentar fechar a venda.'
+            err.error?.message || 'Erro ao tentar fechar a venda.'
           );
         },
       });
@@ -490,7 +490,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
       },
       error: (err) => {
         this.toastr.error(
-          err.error.message || 'Erro ao tentar realizar operação.'
+          err.error?.message || 'Erro ao tentar realizar operação.'
         );
       },
     });

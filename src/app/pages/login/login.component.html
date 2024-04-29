@@ -1,0 +1,32 @@
+<div class="login-box">
+  <form nz-form [nzAutoTips]="autoTips" [formGroup]="formLogin">
+    <nz-form-item>
+      <nz-form-label nzRequired>Login</nz-form-label>
+      <nz-form-control>
+        <input
+          formControlName="login"
+          nz-input
+          placeholder="Infome o login."
+        />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label nzRequired>Senha</nz-form-label>
+      <nz-form-control>
+        <input
+          formControlName="senha"
+          type="password"
+          nz-input
+          placeholder="Infome a senha."
+        />
+      </nz-form-control>
+    </nz-form-item>
+
+    <button class="bt-logar" nz-button nzType="primary" (click)="logar()">
+      Entrar
+    </button>
+
+  </form>
+</div>
+

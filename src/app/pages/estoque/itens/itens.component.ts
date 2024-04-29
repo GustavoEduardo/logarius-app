@@ -123,7 +123,7 @@ export default class ItensComponent extends Helpers implements OnInit {
         };
       },
       error: (err) => {
-        this.toastr.error(err.error.message || 'Erro ao listar produtos.');
+        this.toastr.error(err.error?.message || 'Erro ao listar produtos.');
       },
     });
   }
@@ -244,7 +244,7 @@ export default class ItensComponent extends Helpers implements OnInit {
           },
           error: (err)=>{
             this.loadingBt = false;
-            this.toastr.error(err.error.message || 'Falha ao cadastrar produto');
+            this.toastr.error(err.error?.message || 'Falha ao cadastrar produto');
           }
         })
 

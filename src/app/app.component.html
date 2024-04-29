@@ -1,3 +1,4 @@
+@if ( currentUser$ | async) {
 <nz-layout>
   <nz-sider
     [ngClass]="[isCollapsed ? 'mobile-side' : '']"
@@ -11,7 +12,7 @@
       <li nz-submenu nzTitle="Estabelecimento" nzIcon="home">
         <ul>
           <li nz-menu-item>
-            <a [routerLink]="['comandas']">Comandas</a>
+            <a [routerLink]="['estabelecimento/comandas']">Comandas</a>
           </li>
         </ul>
       </li>
@@ -49,7 +50,7 @@
       ></span>
       <div class="header-options">
         <div class="header-options-flex">
-          <button
+          <button [disabled]="true"
             class="modal-venda-bt"
             (click)="modalVenda.showModalNovaVenda()"
           >
@@ -61,13 +62,17 @@
             ></i>
             Nova Venda
           </button>
+          <a (click)="logout()">Sair</a>
         </div>
       </div>
     </nz-header>
     <nz-content>
       <nz-breadcrumb>
-        <nz-breadcrumb-item>-</nz-breadcrumb-item>
-        <nz-breadcrumb-item>-</nz-breadcrumb-item>
+        @for ( c of caminho; track $index) {
+          <nz-breadcrumb-item>
+            {{c | titlecase}}
+          </nz-breadcrumb-item>
+        }
       </nz-breadcrumb>
       <div class="inner-content">
         <router-outlet></router-outlet>
@@ -76,4 +81,10 @@
   </nz-layout>
 </nz-layout>
 
-<app-modal-venda #modalVenda></app-modal-venda>
+<!--<app-modal-venda #modalVenda></app-modal-venda>
+     Estudar forma melhor para chamar reqs apenas após o clique no botão.
+-->
+
+}@else {
+  <router-outlet></router-outlet>
+}

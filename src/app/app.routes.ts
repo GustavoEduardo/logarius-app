@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: '/estoque' },
+  { path: '', pathMatch: 'full', redirectTo: '/estabelecimento/comandas' },
   {
-    path: 'comandas',
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.component'),
+  },
+  {
+    path: 'estabelecimento/comandas',
     loadComponent: () => import('./pages/comandas/comandas.component'),
   },
   {

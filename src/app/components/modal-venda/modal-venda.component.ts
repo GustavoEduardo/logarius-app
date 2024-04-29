@@ -101,7 +101,7 @@ export class ModalVendaComponent extends Helpers {
       },
       error: (err) => {
         this.toastr.error(
-          err.error.message || 'Erro ao listar métodos de pagamento.'
+          err.error?.message || 'Erro ao listar métodos de pagamento.'
         );
       },
     });
@@ -113,7 +113,7 @@ export class ModalVendaComponent extends Helpers {
         this.produtos = res.result;
       },
       error: (err) => {
-        this.toastr.error(err.error.message || 'Erro ao listar produtos.');
+        this.toastr.error(err.error?.message || 'Erro ao listar produtos.');
       },
     });
   }
@@ -200,7 +200,7 @@ export class ModalVendaComponent extends Helpers {
           },
           error: (err) => {
             this.toastr.error(
-              err.error.message || 'Erro ao tentar fechar a venda.'
+              err.error?.message || 'Erro ao tentar fechar a venda.'
             );
           },
         });
