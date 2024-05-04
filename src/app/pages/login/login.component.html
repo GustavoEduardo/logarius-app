@@ -1,32 +1,40 @@
-<div class="login-box">
-  <form nz-form [nzAutoTips]="autoTips" [formGroup]="formLogin">
-    <nz-form-item>
-      <nz-form-label nzRequired>Login</nz-form-label>
-      <nz-form-control>
-        <input
-          formControlName="login"
-          nz-input
-          placeholder="Infome o login."
-        />
-      </nz-form-control>
-    </nz-form-item>
+<div class="login-main">
+  <div class="info-box">
+      <span class="titulo">Logarius</span>
+      <p>
+        Gerencie suas vendas, estoque e clientes.
+        Venda na maioria dos marcketplaces e controle tudo por aqui.
+      </p>
 
-    <nz-form-item>
-      <nz-form-label nzRequired>Senha</nz-form-label>
-      <nz-form-control>
-        <input
-          formControlName="senha"
-          type="password"
-          nz-input
-          placeholder="Infome a senha."
-        />
-      </nz-form-control>
-    </nz-form-item>
+  </div>
 
-    <button class="bt-logar" nz-button nzType="primary" (click)="logar()">
-      Entrar
-    </button>
+  <div class="login-box">
+    <form nz-form [nzAutoTips]="autoTips" [formGroup]="formLogin">
+        <label>Login</label>
+          <input
+            formControlName="login"
+            nz-input
+            placeholder="Infome o login."
+          />
+        <label>
+          <span class="color-fff">
+            Senha
+          </span>
+        </label>
 
-  </form>
+          <input
+            formControlName="senha"
+            type="password"
+            nz-input
+            placeholder="Infome a senha."
+          />
+
+
+      <button class="bt-logar" nz-button nzType="primary" (click)="logar()">
+        Entrar
+      </button>
+
+    </form>
+  </div>
+
 </div>
-
