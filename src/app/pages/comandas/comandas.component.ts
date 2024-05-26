@@ -26,6 +26,8 @@ import { NzTableQueryParams } from 'ng-zorro-antd/table';
 import { ProdutoService } from '../../services/produto.service';
 import { IProduto } from '../../types/IProduto';
 import { NzSliderModule } from 'ng-zorro-antd/slider';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox'
 
 @Component({
   selector: 'app-comandas',
@@ -46,6 +48,8 @@ import { NzSliderModule } from 'ng-zorro-antd/slider';
     NzInputNumberModule,
     NzIconModule,
     NzSliderModule,
+    NzBadgeModule,
+    NzCheckboxModule
   ],
   templateUrl: './comandas.component.html',
   styleUrl: './comandas.component.scss',
@@ -59,6 +63,8 @@ export default class ComandasComponent extends Helpers implements OnInit {
     from: 1,
     to: 1,
   };
+
+  loadingBt = false;
 
   params: any = {
     pageIndex: 1,
@@ -90,27 +96,37 @@ export default class ComandasComponent extends Helpers implements OnInit {
   qtdParaAdicionar = 1;
   valor_finalParaAdd = 0;
 
-  fb = inject(FormBuilder);
-  comandaService = inject(ComandaService);
-  produtoService = inject(ProdutoService);
-  toastr = inject(ToastrService);
-  modal = inject(NzModalService);
+  constructor(private produtoService: ProdutoService,
+    private toastr: ToastrService,
+    private fb: FormBuilder,
+    private comandaService: ComandaService,
+    private modal: NzModalService
+  ){
+    super()
+  }
 
   formAdicionar = this.fb.group({
     titulo: [null, Validators.required],
     observacao: [null],
   });
 
+  checkOptions = [
+    { label: 'Aberta', value: 'Aberta', checked: true },
+    { label: 'Fechada', value: 'Fechada' , checked: false },
+    { label: 'Cancelada', value: 'Cancelada', checked: false }
+  ];
+
   formFiltrar = this.fb.group({
     pesquisa: [null],
+    status_comanda: [this.checkOptions]
   });
 
   qtdToRemove = 1;
   qtdMaxRemove = 1;
 
   coresComanda: any = {
-    'Aberta': '#0275d8',
-    'Fechada': '#f0ad4e',
+    'Aberta': '#f0ad4e',
+    'Fechada': '#0275d8',
     'Cancelada': '#d9534f'
   }
 
@@ -131,6 +147,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
   }
 
   listar() {
+    this.loadingBt = true;
     const f = this.filtrar(this.formFiltrar, this.params, this.pagination);
 
     this.qtdFiltrosAtivos = f.qtdFiltrosAtivos;
@@ -138,6 +155,10 @@ export default class ComandasComponent extends Helpers implements OnInit {
     this.comandaService.get(f.queryString).subscribe({
       next: (res) => {
         this.comandas = res.result.data;
+
+        this.loadingBt = false;
+
+        this.showModalFiltrar(false);
 
         this.pagination = {
           perPage: Number(res.result.pagination.perPage),
@@ -149,6 +170,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
         };
       },
       error: (err) => {
+        this.loadingBt = false;
         this.toastr.error(err.error?.message || 'Erro ao listar produtos.');
       },
     });
@@ -163,14 +185,29 @@ export default class ComandasComponent extends Helpers implements OnInit {
     let qtdFiltrosAtivos = 0;
     let queryString = '';
 
-    for (let [key, value] of Object.entries(form?.value)) {
-      if (value) {
-        qtdFiltrosAtivos =
-          key !== 'pesquisa' ? qtdFiltrosAtivos + 1 : qtdFiltrosAtivos;
-
-        if (value) {
-          queryString += `&${key}=${value}`;
+    let status: any = null;
+    
+    if (this.formFiltrar.value.status_comanda) {
+      this.formFiltrar.value.status_comanda!.forEach( (s: { checked: any; value: any; }) => {
+        if (s.checked) {
+            status = status ? status + ',' + s.value : s.value;
         }
+      })
+    }  
+
+    for (let [key, value] of Object.entries(form?.value)) {
+      if (key === 'status_comanda' && status){
+
+        qtdFiltrosAtivos += 1;
+
+        queryString += `&${key}=${status}`;
+
+      }else if (value && key !== 'status_comanda') {
+        qtdFiltrosAtivos =
+        key !== 'pesquisa' ? qtdFiltrosAtivos + 1 : qtdFiltrosAtivos;
+
+        queryString += `&${key}=${value}`;
+        
       }
     }
 
@@ -182,15 +219,14 @@ export default class ComandasComponent extends Helpers implements OnInit {
         }
       }
 
-    if (pagination)
-      if (pagination.currentPage) {
+      if (pagination?.currentPage) {
         // adiciona páginação
         queryString += `&currentPage=${this.pagination.currentPage}`;
       }
 
-    if (pagination.perPage) {
-      queryString += `&perPage=${this.pagination.perPage}`;
-    }
+      if (pagination?.perPage) {
+        queryString += `&perPage=${this.pagination.perPage}`;
+      }
 
     queryString = queryString.replace('&', '?');
 
@@ -214,9 +250,15 @@ export default class ComandasComponent extends Helpers implements OnInit {
       filter: [],
     };
 
-    this.pagination.currentPage = 1;
-
     this.formFiltrar.reset();
+
+    this.checkOptions[0].checked = true;
+    this.checkOptions[1].checked = false;
+    this.checkOptions[2].checked = false;
+
+    this.formFiltrar.value.status_comanda = this.checkOptions;
+
+    this.pagination.currentPage = 1;
 
     this.listar();
   }
@@ -231,6 +273,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
 
   adicinarComanda() {
     if (this.formAdicionar.valid) {
+      this.loadingBt = true;
       this.comandaService.create(this.formAdicionar.value).subscribe({
         next: (res) => {
           this.comandas = res.result.data;
@@ -239,6 +282,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
           this.showModalAdicionar();
         },
         error: (err) => {
+          this.loadingBt = false;
           this.toastr.error(
             err.error?.message || 'Erro ao tentar fechar a venda.'
           );
@@ -479,6 +523,7 @@ export default class ComandasComponent extends Helpers implements OnInit {
 
   // apenasComanda = true não atualizará a venda
   update(comanda: IComanda, apenasComanda = false, silent = true) {
+    this.loadingBt = true;
     this.comandaService.update(comanda, apenasComanda).subscribe({
       next: (res) => {
         this.comandas = res.result.data;
@@ -489,28 +534,62 @@ export default class ComandasComponent extends Helpers implements OnInit {
         this.listarProdutos(); // para trazer lista com estoques atualizados
       },
       error: (err) => {
+        this.loadingBt = false;
         this.toastr.error(
           err.error?.message || 'Erro ao tentar realizar operação.'
         );
+        this.listar();
+        this.listarProdutos();
+        this.showModalDetalhes();
       },
     });
   }
+
+  confirmCancelar(c: IComanda) {
+    const nzTitle = `Dar desconto?`;
+
+    const modal: NzModalRef = this.modal.create({
+      nzTitle,
+      nzContent: `Deseja meso cancelar a comanda "${c.titulo}" ?`,
+      nzWidth: 350,
+      nzFooter: [
+        {
+          label: 'Não',
+          onClick: () => {
+            modal.destroy();
+          },
+        },
+        {
+          label: 'Sim',
+          type: 'primary',
+          onClick: () => {
+            this.cancelar(c.comanda_id);
+            modal.destroy();
+          },
+        },
+      ],
+    });
+  }
+
+  cancelar(id: string){
+
+    this.loadingBt = true;
+
+    this.comandaService.cancelar(id).subscribe({
+      next: (res) =>{
+        this.loadingBt = false;
+        this.toastr.success(res.message || 'Comanda cancelada.');
+        this.listar();
+      },
+      error: (err) =>{
+        this.loadingBt = false;
+        this.toastr.error(err.error.message || 'Falha ao tentar cancelar a comanda.');
+      }
+    })
+
+  }
+
+  showModalFiltrar(visible = !this.modalFiltrarVisible) {
+    this.modalFiltrarVisible = visible
+  }
 }
-
-/* Função cancelar
-
-Exibir msg de confirmação
-  Deve cancelar a venda voltando estques pela api) e alterar status_comanda
-
-*/
-
-/* Pendente na tela
-
-  Cancelar comanda
-  Melhorar modal pagar
-  Detalhes da comanda pendente e cancelada
-  Filtros
-  vizualização (ordenar por status ou data)
-  Loadings
-
- */

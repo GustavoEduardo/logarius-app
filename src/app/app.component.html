@@ -1,15 +1,16 @@
 @if ( currentUser$ | async) {
 <nz-layout>
-  <nz-sider
+  <nz-sider style="background-color: #011425f4;"
     [ngClass]="[isCollapsed ? 'mobile-side' : '']"
     nzCollapsible
     [(nzCollapsed)]="isCollapsed"
     [nzTrigger]="null"
+    [nzTheme]="'dark'"
   >
     <div class="logo"></div>
 
-    <ul nz-menu nzTheme="dark" nzMode="inline">
-      <li nz-submenu nzTitle="Estabelecimento" nzIcon="home">
+    <ul nz-menu nzTheme="dark" nzMode="inline" style="background-color: transparent;">
+      <li style="background-color: transparent;" nz-submenu nzTitle="Estabelecimento" nzIcon="home">
         <ul>
           <li nz-menu-item>
             <a [routerLink]="['estabelecimento/comandas']">Comandas</a>
@@ -50,7 +51,7 @@
       ></span>
       <div class="header-options">
         <div class="header-options-flex">
-          <button [disabled]="true"
+          <button
             class="modal-venda-bt"
             (click)="modalVenda.showModalNovaVenda()"
           >
@@ -60,9 +61,10 @@
               nzType="thunderbolt"
               nzTheme="outline"
             ></i>
-            Nova Venda
+            Vender
           </button>
-          <a (click)="logout()">Sair</a>
+          <a nz-button nzType="link" nzTooltipTitle="Sair" nz-tooltip (click)="logout()">
+            <span nz-icon nzType="logout" nzTheme="outline"></span></a>
         </div>
       </div>
     </nz-header>
@@ -81,9 +83,7 @@
   </nz-layout>
 </nz-layout>
 
-<!--<app-modal-venda #modalVenda></app-modal-venda>
-     Estudar forma melhor para chamar reqs apenas após o clique no botão.
--->
+<app-modal-venda #modalVenda></app-modal-venda>
 
 }@else {
   <router-outlet></router-outlet>

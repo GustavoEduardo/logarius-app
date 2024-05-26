@@ -32,7 +32,9 @@ export class AuthService {
 
   logout() {
     this.removerTokenLS();
-    this.userSubject.next(null);
+    setTimeout(()=>{
+      this.userSubject.next(null);
+    }, 30);
   }
 
   salvarToken(token: string) {

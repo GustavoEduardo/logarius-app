@@ -13,6 +13,7 @@ import {
   FullscreenOutline,
   FullscreenExitOutline,
   FilterOutline,
+  LogoutOutline,
 } from '@ant-design/icons-angular/icons';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 
@@ -29,7 +30,8 @@ const icons = [
   ShoppingOutline,
   FullscreenOutline,
   FullscreenExitOutline,
-  FilterOutline
+  FilterOutline,
+  LogoutOutline
 ];
 
 export function provideNzIcons(): EnvironmentProviders {

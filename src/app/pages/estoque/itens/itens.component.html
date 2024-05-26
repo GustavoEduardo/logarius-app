@@ -79,7 +79,7 @@
       <button
         nz-tooltip="Filtros"
         nz-button
-        nzType="primary"
+        nzType="default"
         (click)="showModalFiltrar()"
       >
         <span nz-icon nzType="filter" nzTheme="outline"></span>
@@ -281,7 +281,7 @@
       >
         Cancelar
       </button>
-      <button nz-button nzType="primary" (click)="cadastrar()">
+      <button [nzLoading]="loadingBt" nz-button nzType="primary" (click)="cadastrar()">
         Confirmar
       </button>
     </div>

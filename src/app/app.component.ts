@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   OnInit,
   ViewChild,
@@ -10,8 +11,9 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { ModalVendaComponent } from './components/modal-venda/modal-venda.component';
-import { Observable, filter } from 'rxjs';
+import { filter } from 'rxjs';
 import { AuthService } from './services/auth.service';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 @Component({
   selector: 'app-root',
@@ -25,11 +27,12 @@ import { AuthService } from './services/auth.service';
     NzBreadCrumbModule,
     RouterModule,
     ModalVendaComponent,
+    NzToolTipModule
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
   isCollapsed = false;
 
   @ViewChild('modalVenda')
@@ -46,7 +49,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.test();
+    this.test();   
 
     this.router.events
     .pipe(filter(event => event instanceof NavigationEnd))
@@ -60,6 +63,14 @@ export class AppComponent implements OnInit {
     }
 
   }
+
+  ngAfterViewInit(): void {
+    this.currentUser$.subscribe({next: (res) =>{
+      if (!res) {
+        this.authService.removerTokenLS();
+      }
+    }})
+  }  
 
   test() {
 
@@ -75,7 +86,7 @@ export class AppComponent implements OnInit {
 
   logout(){
     this.router.navigate(['/login']);
-    this.authService.logout()
+    this.authService.logout();
   }
 
 }

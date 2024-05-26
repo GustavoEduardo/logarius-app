@@ -37,4 +37,9 @@ export class ComandaService {
   get(queryStr?: any): Observable<any> {
     return this.http.get(`${environment.apiUrl}/comanda${queryStr || ''}`);
   }
+
+  cancelar(id: string): Observable<any> {
+
+    return this.http.delete(`${environment.apiUrl}/comanda/${id}`);
+  }
 }

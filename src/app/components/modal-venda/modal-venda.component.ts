@@ -72,26 +72,26 @@ export class ModalVendaComponent extends Helpers {
     valor_desconto: [0],
   });
 
-  ngOnInit() {
-    this.clientes = [
-      {
-        cliente_id: '26b2e433-3e08-47e9-a10b-f5617612044f',
-        nome: 'Indefinido',
-      },
-    ];
+  public showModalNovaVenda() {
 
-    this.listProdutos();
-    this.listMetodosPagamento();
-  }
-
-  showModalNovaVenda() {
-    this.modalVendaVisible = !this.modalVendaVisible;
-
-    if (!this.modalVendaVisible) {
+    if (this.modalVendaVisible) {
       this.formNovaVenda.reset();
       this.itensDaVenda = [];
       this.valorTotalVenda = 0;
+    } else {
+
+      this.clientes = [
+        {
+          cliente_id: '26b2e433-3e08-47e9-a10b-f5617612044f',
+          nome: 'Indefinido',
+        },
+      ];
+
+      this.listProdutos();
+      this.listMetodosPagamento();
+
     }
+    this.modalVendaVisible = !this.modalVendaVisible;
   }
 
   listMetodosPagamento() {

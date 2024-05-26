@@ -69,9 +69,13 @@ export default class ItensComponent extends Helpers implements OnInit {
   modalAddVisible = false;
   produtos: IProduto | any;
 
-  produtoService = inject(ProdutoService);
-  toastr = inject(ToastrService);
-  fb = inject(FormBuilder);
+
+  constructor(private produtoService: ProdutoService,
+    private toastr: ToastrService,
+    private fb: FormBuilder
+  ){
+    super()
+  }
 
   formFiltrar = this.fb.group({
     precoDe: [null],
